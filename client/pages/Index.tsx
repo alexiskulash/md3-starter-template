@@ -37,7 +37,7 @@ declare global {
 
 export default function Index() {
   useEffect(() => {
-    // Material Design 3 components loaded successfully
+    // Material Design 3 components are ready
     console.log("Material Design 3 Starter Ready");
   }, []);
 
