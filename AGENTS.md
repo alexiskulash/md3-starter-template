@@ -1,25 +1,25 @@
-# Fusion Starter
+# Material Design 3 Starter
 
-A production-ready full-stack React application template with integrated Express server, featuring React Router 6 SPA mode, TypeScript, Vitest, Zod and modern tooling.
-
-While the starter comes with a express server, only create endpoint when strictly neccesary, for example to encapsulate logic that must leave in the server, such as private keys handling, or certain DB operations, db...
+A minimal, bare-bones starter application built exclusively with Material Design 3 web components. Perfect for prototyping new applications quickly with Google's official Material Design system.
 
 ## Tech Stack
 
-- **PNPM**: Prefer pnpm
-- **Frontend**: React 18 + React Router 6 (spa) + TypeScript + Vite + TailwindCSS 3
-- **Backend**: Express server integrated with Vite dev server
+- **PNPM**: Package manager
+- **Frontend**: React 18 + React Router 6 (SPA) + TypeScript + Vite
+- **Design System**: Material Design 3 ([@material/web](https://github.com/material-components/material-web))
+- **Styling**: TailwindCSS 3 with Material Design 3 color tokens
+- **Backend**: Express server (optional - only create endpoints when strictly necessary)
 - **Testing**: Vitest
-- **UI**: Radix UI + TailwindCSS 3 + Lucide React icons
 
 ## Project Structure
 
 ```
 client/                   # React SPA frontend
 ├── pages/                # Route components (Index.tsx = home)
-├── components/ui/        # Pre-built UI component library
-├── App.tsx                # App entry point and with SPA routing setup
-└── global.css            # TailwindCSS 3 theming and global styles
+├── types/                # TypeScript type declarations
+│   └── material-web.d.ts # Material Web Components types
+├── App.tsx               # App entry point and SPA routing setup
+└── global.css            # Material Design 3 tokens + TailwindCSS
 
 server/                   # Express API backend
 ├── index.ts              # Main server setup (express config + routes)
@@ -27,19 +27,107 @@ server/                   # Express API backend
 
 shared/                   # Types used by both client & server
 └── api.ts                # Example of how to share api interfaces
+
+tailwind.config.ts        # Tailwind with MD3 color tokens
 ```
 
-## Key Features
+## Material Design 3 Setup
+
+### Available Components
+
+This starter includes the official Material Web Components library with support for:
+
+**Buttons**
+- `<md-filled-button>` - High-emphasis primary actions
+- `<md-outlined-button>` - Medium-emphasis secondary actions  
+- `<md-text-button>` - Low-emphasis tertiary actions
+- `<md-elevated-button>` - Actions needing visual separation
+- `<md-filled-tonal-button>` - Middle-ground emphasis
+
+**Cards**
+- `<md-elevated-card>` - Cards with shadow elevation
+- `<md-filled-card>` - Cards with tonal background
+- `<md-outlined-card>` - Cards with outline border
+
+**Form Inputs**
+- `<md-filled-text-field>` - Text inputs with filled style
+- `<md-outlined-text-field>` - Text inputs with outlined style
+- `<md-checkbox>` - Checkboxes
+- `<md-radio>` - Radio buttons
+- `<md-switch>` - Toggle switches
+- `<md-slider>` - Range sliders
+- `<md-filled-select>` / `<md-outlined-select>` - Dropdowns
+
+**Other Components**
+- `<md-icon>` - Material Icons
+- `<md-fab>` - Floating action buttons
+- `<md-chip>` variants - Chips for filters, inputs, etc.
+- `<md-dialog>` - Modal dialogs
+- `<md-list>` - Lists
+- `<md-tabs>` - Tab navigation
+- `<md-menu>` - Menus
+
+### Using Material Components
+
+1. **Import the web component:**
+```typescript
+import "@material/web/button/filled-button.js";
+```
+
+2. **Declare types (if TypeScript complains):**
+```typescript
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "md-filled-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
+```
+
+3. **Use in JSX:**
+```tsx
+<md-filled-button>Click Me</md-filled-button>
+```
+
+### Material Design 3 Color System
+
+All color tokens are defined in `client/global.css` using the MD3 color system:
+
+- **Primary**: Main brand color (purple by default)
+- **Secondary**: Supporting brand color
+- **Tertiary**: Accent color
+- **Surface**: Background for components
+- **Error**: Error states
+
+Colors are defined in HSL format for Tailwind compatibility and are available as both CSS custom properties and Tailwind utilities:
+
+```tsx
+// Using Tailwind classes
+<div className="bg-primary text-primary-foreground">
+
+// Using CSS custom properties
+<div style={{ color: "hsl(var(--md-sys-color-primary))" }}>
+```
+
+### Customizing the Theme
+
+To change colors:
+
+1. Open `client/global.css`
+2. Modify the HSL values in `:root` (light theme) and `.dark` (dark theme)
+3. Or use [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) to generate a complete palette
 
 ## SPA Routing System
 
 The routing system is powered by React Router 6:
 
-- `client/pages/Index.tsx` represents the home page.
-- Routes are defined in `client/App.tsx` using the `react-router-dom` import
+- `client/pages/Index.tsx` represents the home page
+- Routes are defined in `client/App.tsx` using `react-router-dom`
 - Route files are located in the `client/pages/` directory
-
-For example, routes can be defined with:
 
 ```typescript
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -48,44 +136,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
   <Route path="/" element={<Index />} />
   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
   <Route path="*" element={<NotFound />} />
-</Routes>;
+</Routes>
 ```
-
-### Styling System
-
-- **Primary**: TailwindCSS 3 utility classes
-- **Theme and design tokens**: Configure in `client/global.css` 
-- **UI components**: Pre-built library in `client/components/ui/`
-- **Utility**: `cn()` function combines `clsx` + `tailwind-merge` for conditional classes
-
-```typescript
-// cn utility usage
-className={cn(
-  "base-classes",
-  { "conditional-class": condition },
-  props.className  // User overrides
-)}
-```
-
-### Express Server Integration
-
-- **Development**: Single port (8080) for both frontend/backend
-- **Hot reload**: Both client and server code
-- **API endpoints**: Prefixed with `/api/`
-
-#### Example API Routes
-- `GET /api/ping` - Simple ping api
-- `GET /api/demo` - Demo endpoint  
-
-### Shared Types
-Import consistent types in both client and server:
-```typescript
-import { DemoResponse } from '@shared/api';
-```
-
-Path aliases:
-- `@shared/*` - Shared folder
-- `@/*` - Client folder
 
 ## Development Commands
 
@@ -94,71 +146,59 @@ pnpm dev        # Start dev server (client + server)
 pnpm build      # Production build
 pnpm start      # Start production server
 pnpm typecheck  # TypeScript validation
-pnpm test          # Run Vitest tests
+pnpm test       # Run Vitest tests
 ```
 
-## Adding Features
+## Adding New Material Components
 
-### Add new colors to the theme
+1. Find the component in [Material Web docs](https://github.com/material-components/material-web)
+2. Import it in your component:
+   ```tsx
+   import "@material/web/[category]/[component-name].js";
+   ```
+3. Add TypeScript declarations if needed (see `client/types/material-web.d.ts`)
+4. Use the component in your JSX:
+   ```tsx
+   <md-component-name />
+   ```
 
-Open `client/global.css` and `tailwind.config.ts` and add new tailwind colors.
+## Express Server Integration
 
-### New API Route
-1. **Optional**: Create a shared interface in `shared/api.ts`:
-```typescript
-export interface MyRouteResponse {
-  message: string;
-  // Add other response properties here
-}
-```
+- **Development**: Single port (8080) for both frontend/backend
+- **Hot reload**: Both client and server code
+- **API endpoints**: Prefixed with `/api/`
+- **Note**: Only create server endpoints when strictly necessary (e.g., for handling private keys, sensitive DB operations)
 
-2. Create a new route handler in `server/routes/my-route.ts`:
-```typescript
-import { RequestHandler } from "express";
-import { MyRouteResponse } from "@shared/api"; // Optional: for type safety
+## Design Philosophy
 
-export const handleMyRoute: RequestHandler = (req, res) => {
-  const response: MyRouteResponse = {
-    message: 'Hello from my endpoint!'
-  };
-  res.json(response);
-};
-```
+This starter is intentionally **minimal and bare-bones**:
 
-3. Register the route in `server/index.ts`:
-```typescript
-import { handleMyRoute } from "./routes/my-route";
+✅ Material Design 3 web components and theming  
+✅ TypeScript support for all MD3 components  
+✅ Responsive layout with Tailwind CSS  
+✅ Clean project structure  
 
-// Add to the createServer function:
-app.get("/api/my-endpoint", handleMyRoute);
-```
+❌ No state management (add as needed)  
+❌ No API client libraries (add as needed)  
+❌ No authentication (add as needed)  
+❌ No database integrations (add as needed)  
 
-4. Use in React components with type safety:
-```typescript
-import { MyRouteResponse } from '@shared/api'; // Optional: for type safety
+## Resources
 
-const response = await fetch('/api/my-endpoint');
-const data: MyRouteResponse = await response.json();
-```
-
-### New Page Route
-1. Create component in `client/pages/MyPage.tsx`
-2. Add route in `client/App.tsx`:
-```typescript
-<Route path="/my-page" element={<MyPage />} />
-```
+- [Material Design 3 Guidelines](https://m3.material.io/)
+- [Material Web Components](https://github.com/material-components/material-web)
+- [Material Icons](https://fonts.google.com/icons)
+- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
+- [Builder.io Projects Documentation](https://www.builder.io/c/docs/projects)
 
 ## Production Deployment
 
 - **Standard**: `pnpm build`
-- **Binary**: Self-contained executables (Linux, macOS, Windows)
-- **Cloud Deployment**: Use either Netlify or Vercel via their MCP integrations for easy deployment. Both providers work well with this starter template.
+- **Cloud Deployment**: Use Netlify or Vercel via their MCP integrations for easy deployment
 
-## Architecture Notes
+## Notes
 
-- Single-port development with Vite + Express integration
-- TypeScript throughout (client, server, shared)
-- Full hot reload for rapid development
-- Production-ready with multiple deployment options
-- Comprehensive UI component library included
-- Type-safe API communication via shared interfaces
+- This project uses official Material Web Components from Google
+- All components are web components (custom elements) that work with React
+- The design system is completely separate from shadcn/ui - this is a pure Material Design 3 implementation
+- The color system uses Material Design 3's token-based approach for consistent theming
