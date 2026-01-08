@@ -33,8 +33,7 @@ export default {
           DEFAULT: "hsl(var(--md-sys-color-error))",
           foreground: "hsl(var(--md-sys-color-on-error))",
           container: "hsl(var(--md-sys-color-error-container))",
-          "container-foreground":
-            "hsl(var(--md-sys-color-on-error-container))",
+          "container-foreground": "hsl(var(--md-sys-color-on-error-container))",
         },
         surface: {
           DEFAULT: "hsl(var(--md-sys-color-surface))",
