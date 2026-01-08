@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import "../types/material-web";
 
 // Import Material Design 3 web components
 import "@material/web/button/filled-button.js";
@@ -7,6 +6,34 @@ import "@material/web/button/outlined-button.js";
 import "@material/web/button/text-button.js";
 import "@material/web/labs/card/elevated-card.js";
 import "@material/web/icon/icon.js";
+
+// Declare custom elements for TypeScript
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "md-filled-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+      "md-outlined-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+      "md-text-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+      "md-elevated-card": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+      "md-icon": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
 
 export default function Index() {
   useEffect(() => {
