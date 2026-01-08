@@ -50,7 +50,7 @@ export default function Index() {
             Material Design 3
           </h1>
           <p className="text-xl text-surface-variant-foreground">
-            A minimal starter for prototyping with Material Design 3
+            A minimal starter for rapid prototyping with Material Design 3
           </p>
         </div>
 
