@@ -1,0 +1,23 @@
+# Documentation
+
+When making updates in this app be aware that a different LLM or developer will need to come and make updates to this app later. Always document your work by creating/updating the appropriate files in the .builder/rules directory.
+
+To create/update a rules file for Builder's AI:
+
+Create a .mdc file within the .builder/rules/ directory or update an existing one as appropriate. Provide a logical name for your file and provide the metadata as shown below:
+
+# example of a .builder/rules/ file
+# .builder/rules/component-structure.mdc
+---
+description: Component structure
+globs:
+alwaysApply: false
+---
+<add whatever documentation is needed>
+############################
+The following options are available as keys within the metadata header:
+description: a brief description of the file's rules
+globs: specific file paths where these rules should apply
+alwaysApply: if set to true, the AI always applies these rules; otherwise, the AI contextually decides when to apply the rules (false should be default unless the rule should be global)
+
+Builder's AI will not make any changes to your rule files.
