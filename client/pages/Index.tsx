@@ -56,7 +56,15 @@ export default function Index() {
 
         {/* Main Card */}
         <md-elevated-card style={{ width: "100%", marginBottom: "24px" }}>
-          <div className="p-8">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "32px",
+            }}
+          >
             <h2 className="text-2xl font-medium text-foreground mb-4">
               Welcome to MD3 Starter
             </h2>
