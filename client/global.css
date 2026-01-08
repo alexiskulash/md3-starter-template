@@ -1,5 +1,5 @@
 /** @import must precede all other statements */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,94 +7,112 @@
 
 @layer base {
   /**
-   * Tailwind CSS theme
-   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
-   * A different format will require also updating the theme in tailwind.config.ts.
-  */
+   * Material Design 3 Color Tokens
+   * Using MD3 color system with HSL format for Tailwind compatibility
+   */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Primary */
+    --md-sys-color-primary: 258 100% 62%;
+    --md-sys-color-on-primary: 0 0% 100%;
+    --md-sys-color-primary-container: 261 100% 90%;
+    --md-sys-color-on-primary-container: 258 100% 20%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Secondary */
+    --md-sys-color-secondary: 258 30% 60%;
+    --md-sys-color-on-secondary: 0 0% 100%;
+    --md-sys-color-secondary-container: 258 30% 90%;
+    --md-sys-color-on-secondary-container: 258 30% 20%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Tertiary */
+    --md-sys-color-tertiary: 30 100% 55%;
+    --md-sys-color-on-tertiary: 0 0% 100%;
+    --md-sys-color-tertiary-container: 30 100% 90%;
+    --md-sys-color-on-tertiary-container: 30 100% 20%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Error */
+    --md-sys-color-error: 0 85% 60%;
+    --md-sys-color-on-error: 0 0% 100%;
+    --md-sys-color-error-container: 0 85% 90%;
+    --md-sys-color-on-error-container: 0 85% 20%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Surface */
+    --md-sys-color-surface: 0 0% 99%;
+    --md-sys-color-on-surface: 258 10% 10%;
+    --md-sys-color-surface-variant: 258 10% 93%;
+    --md-sys-color-on-surface-variant: 258 10% 30%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Background */
+    --md-sys-color-background: 0 0% 99%;
+    --md-sys-color-on-background: 258 10% 10%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Outline */
+    --md-sys-color-outline: 258 10% 50%;
+    --md-sys-color-outline-variant: 258 10% 80%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Shape tokens */
+    --md-sys-shape-corner-none: 0px;
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-extra-large: 28px;
+    --md-sys-shape-corner-full: 9999px;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Tailwind compatibility - map to existing system */
+    --background: var(--md-sys-color-background);
+    --foreground: var(--md-sys-color-on-background);
+    --primary: var(--md-sys-color-primary);
+    --primary-foreground: var(--md-sys-color-on-primary);
+    --secondary: var(--md-sys-color-secondary);
+    --secondary-foreground: var(--md-sys-color-on-secondary);
+    --muted: var(--md-sys-color-surface-variant);
+    --muted-foreground: var(--md-sys-color-on-surface-variant);
+    --border: var(--md-sys-color-outline-variant);
+    --radius: var(--md-sys-shape-corner-medium);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark theme - Material Design 3 dark colors */
+    --md-sys-color-primary: 220 100% 75%;
+    --md-sys-color-on-primary: 220 100% 20%;
+    --md-sys-color-primary-container: 220 100% 30%;
+    --md-sys-color-on-primary-container: 220 100% 90%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --md-sys-color-secondary: 220 30% 75%;
+    --md-sys-color-on-secondary: 220 30% 20%;
+    --md-sys-color-secondary-container: 220 30% 30%;
+    --md-sys-color-on-secondary-container: 220 30% 90%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --md-sys-color-tertiary: 30 100% 70%;
+    --md-sys-color-on-tertiary: 30 100% 20%;
+    --md-sys-color-tertiary-container: 30 100% 30%;
+    --md-sys-color-on-tertiary-container: 30 100% 90%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --md-sys-color-error: 0 85% 70%;
+    --md-sys-color-on-error: 0 85% 20%;
+    --md-sys-color-error-container: 0 85% 30%;
+    --md-sys-color-on-error-container: 0 85% 90%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --md-sys-color-surface: 220 15% 10%;
+    --md-sys-color-on-surface: 220 5% 90%;
+    --md-sys-color-surface-variant: 220 10% 20%;
+    --md-sys-color-on-surface-variant: 220 5% 80%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --md-sys-color-background: 220 15% 8%;
+    --md-sys-color-on-background: 220 5% 90%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --md-sys-color-outline: 220 5% 60%;
+    --md-sys-color-outline-variant: 220 10% 30%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: var(--md-sys-color-background);
+    --foreground: var(--md-sys-color-on-background);
+    --primary: var(--md-sys-color-primary);
+    --primary-foreground: var(--md-sys-color-on-primary);
+    --secondary: var(--md-sys-color-secondary);
+    --secondary-foreground: var(--md-sys-color-on-secondary);
+    --muted: var(--md-sys-color-surface-variant);
+    --muted-foreground: var(--md-sys-color-on-surface-variant);
+    --border: var(--md-sys-color-outline-variant);
   }
 }
 
@@ -105,6 +123,8 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
   }
 
   :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) {
@@ -117,4 +137,24 @@
     overflow-x: auto;
     white-space: pre;
   }
+}
+
+/* Material Design 3 Web Components customization */
+md-filled-button {
+  --md-filled-button-container-color: hsl(var(--md-sys-color-primary));
+  --md-filled-button-label-text-color: hsl(var(--md-sys-color-on-primary));
+}
+
+md-outlined-button {
+  --md-outlined-button-outline-color: hsl(var(--md-sys-color-outline));
+  --md-outlined-button-label-text-color: hsl(var(--md-sys-color-primary));
+}
+
+md-elevated-card {
+  --md-elevated-card-container-color: hsl(var(--md-sys-color-surface));
+}
+
+md-filled-text-field {
+  --md-filled-text-field-container-color: hsl(var(--md-sys-color-surface-variant));
+  --md-filled-text-field-label-text-color: hsl(var(--md-sys-color-on-surface-variant));
 }
