@@ -98,6 +98,36 @@ import { Calendar } from "../components/Calendar";
 
 ## Material Design 3 Setup
 
+### ⚠️ CRITICAL: Avoid Material Web "Labs" Components
+
+**DO NOT import from `@material/web/labs/`** - these are experimental components that may not be available or stable.
+
+❌ **WRONG - Will cause build errors:**
+```typescript
+import "@material/web/labs/segmentedbutton/outlined-segmented-button-set.js";
+// Error: Failed to resolve import - labs components are not available!
+```
+
+✅ **CORRECT - Use stable components instead:**
+```typescript
+// For segmented buttons, use a group of outlined buttons:
+import "@material/web/button/outlined-button.js";
+
+// Or use tabs for similar functionality:
+import "@material/web/tabs/tabs.js";
+import "@material/web/tabs/primary-tab.js";
+```
+
+**Why this happens:**
+- Lab components are experimental and not part of the stable `@material/web` package
+- They may have different import paths or require separate installation
+- They can break production builds
+
+**Solution:**
+- Always use stable components from `@material/web/[category]/[component].js`
+- Check the "Available Components" list below for supported components
+- If you need segmented button functionality, use grouped buttons or tabs instead
+
 ### Available Components
 
 This starter includes the official Material Web Components library with support for:
