@@ -100,6 +100,47 @@ declare global {
 <md-filled-button>Click Me</md-filled-button>
 ```
 
+## Material Web Components - Important React Integration Notes
+
+### Handling Boolean Attributes
+
+Material Web Components are **native web components**, not React components. Boolean attributes must be handled carefully:
+
+❌ **WRONG:**
+
+```tsx
+<md-filled-button disabled={false}>Click Me</md-filled-button>
+// Sets disabled="false" which is truthy - button stays disabled!
+```
+
+✅ **CORRECT:**
+
+```tsx
+<md-filled-button disabled={isDisabled ? true : undefined}>
+  Click Me
+</md-filled-button>
+// Sets attribute when true, removes it when undefined
+```
+
+### Event Handling
+
+Material Web Components use native events, not React synthetic events:
+
+- ✅ For standard React state: Use refs with `addEventListener`
+- ✅ For simple use cases: Use standard HTML inputs styled with Tailwind/MD3 instead
+
+### Form Validation
+
+Always use `useMemo` or `useCallback` for derived state that controls component behavior:
+
+```tsx
+const isFormValid = useMemo(() => {
+  return !!(field1 && field2 && field3);
+}, [field1, field2, field3]);
+```
+
+**Without `useMemo`, the value only calculates once and won't update when dependencies change.**
+
 ### Material Design 3 Color System
 
 All color tokens are defined in `client/global.css` using the MD3 color system:
