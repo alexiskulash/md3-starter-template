@@ -107,14 +107,18 @@ declare global {
 Material Web Components are **native web components**, not React components. Boolean attributes must be handled carefully:
 
 ❌ **WRONG:**
+
 ```tsx
 <md-filled-button disabled={false}>Click Me</md-filled-button>
 // Sets disabled="false" which is truthy - button stays disabled!
 ```
 
 ✅ **CORRECT:**
+
 ```tsx
-<md-filled-button disabled={isDisabled ? true : undefined}>Click Me</md-filled-button>
+<md-filled-button disabled={isDisabled ? true : undefined}>
+  Click Me
+</md-filled-button>
 // Sets attribute when true, removes it when undefined
 ```
 
