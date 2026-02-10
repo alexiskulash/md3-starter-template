@@ -124,10 +124,53 @@ Material Web Components are **native web components**, not React components. Boo
 
 ### Event Handling
 
-Material Web Components use native events, not React synthetic events:
+Material Web Components use **native DOM events**, not React synthetic events.
 
-- ✅ For standard React state: Use refs with `addEventListener`
-- ✅ For simple use cases: Use standard HTML inputs styled with Tailwind/MD3 instead
+**CRITICAL RULES:**
+
+1. **Never use `onChange` on Material Web Components** - it won't fire
+2. **Use `onClick` for interactive components** (checkboxes, buttons, etc.)
+3. **For complex state changes, use refs with `addEventListener`**
+
+**Common Event Handlers:**
+
+✅ **Checkboxes - Use `onClick`:**
+```tsx
+<md-checkbox
+  checked={isChecked ? true : undefined}
+  onClick={() => setIsChecked(!isChecked)}
+/>
+```
+
+❌ **WRONG - onChange doesn't work:**
+```tsx
+<md-checkbox
+  checked={isChecked}
+  onChange={() => setIsChecked(!isChecked)}  // WON'T FIRE!
+/>
+```
+
+✅ **Text Fields - Use `onInput`:**
+```tsx
+<md-filled-text-field
+  value={text}
+  onInput={(e: any) => setText(e.target.value)}
+/>
+```
+
+✅ **Buttons - Use `onClick`:**
+```tsx
+<md-filled-button onClick={handleClick}>
+  Click Me
+</md-filled-button>
+```
+
+**When in doubt:** Use `onClick` for interactive components, `onInput` for text fields.
+
+**Key Takeaway:**
+- Material Web Components use native events - use `onClick` not `onChange`
+- Follow the Material Web Components event handling rules from AGENTS.md exactly
+- Test all interactive components for event handling
 
 ### Form Validation
 
