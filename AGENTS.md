@@ -98,17 +98,57 @@ import { Calendar } from "../components/Calendar";
 
 ## Material Design 3 Setup
 
-### ⚠️ CRITICAL: Avoid Material Web "Labs" Components
+### ⚠️ CRITICAL: Verifying Material Web Component Imports
 
-**DO NOT import from `@material/web/labs/`** - these are experimental components that may not be available or stable.
+**CRITICAL**: Before importing any Material Web component, especially lab components, ALWAYS verify the exact import path exists.
 
-❌ **WRONG - Will cause build errors:**
+#### Why This Matters
+
+Material Web lab components may have inconsistent folder naming:
+- ✅ `@material/web/labs/segmentedbutton/outlined-segmented-button.js`
+- ✅ `@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js` (note: one word, not two)
+- ❌ `@material/web/labs/segmentedbutton/outlined-segmented-button-set.js` (WRONG - doesn't exist)
+
+Lab components are experimental and may not be available or stable, which can break production builds.
+
+#### Required Workflow
+
+1. **BEFORE** writing any import statement for lab components:
+   ```bash
+   # Check what's available in labs
+   ls node_modules/@material/web/labs/
+
+   # Check specific component folder contents
+   ls node_modules/@material/web/labs/[folder-name]/
+   ```
+
+2. **THEN** write the import using the verified path
+
+#### Example
+
+❌ **WRONG - Assuming the path:**
 ```typescript
 import "@material/web/labs/segmentedbutton/outlined-segmented-button-set.js";
-// Error: Failed to resolve import - labs components are not available!
+// Error: Failed to resolve import!
 ```
 
-✅ **CORRECT - Use stable components instead:**
+✅ **CORRECT - Verify first:**
+```bash
+$ ls node_modules/@material/web/labs/
+# Output shows: segmentedbutton/ and segmentedbuttonset/
+
+$ ls node_modules/@material/web/labs/segmentedbuttonset/
+# Output shows: outlined-segmented-button-set.js
+```
+```typescript
+import "@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js";
+```
+
+#### Recommended Approach
+
+**Prefer stable components over lab components whenever possible:**
+
+✅ **Use stable alternatives:**
 ```typescript
 // For segmented buttons, use a group of outlined buttons:
 import "@material/web/button/outlined-button.js";
@@ -118,15 +158,7 @@ import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 ```
 
-**Why this happens:**
-- Lab components are experimental and not part of the stable `@material/web` package
-- They may have different import paths or require separate installation
-- They can break production builds
-
-**Solution:**
-- Always use stable components from `@material/web/[category]/[component].js`
-- Check the "Available Components" list below for supported components
-- If you need segmented button functionality, use grouped buttons or tabs instead
+This verification step prevents build errors and dev server failures
 
 ### Available Components
 
