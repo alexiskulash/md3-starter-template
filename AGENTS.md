@@ -31,6 +31,71 @@ shared/                   # Types used by both client & server
 tailwind.config.ts        # Tailwind with MD3 color tokens
 ```
 
+## Import Resolution Best Practices
+
+**CRITICAL**: Always verify files exist before importing them to prevent build errors.
+
+### Before Creating Any Import Statement:
+
+1. **Verify the file exists** - Use the Read or Glob tool to confirm the file is present
+2. **Check the correct relative path** - Calculate the path from the importing file to the target file
+3. **Use proper file extensions** - TypeScript/React files should use `.tsx` or `.ts` extensions
+4. **Respect case sensitivity** - File names are case-sensitive in most environments
+
+### Common Import Errors to Avoid:
+
+❌ **WRONG - Importing a non-existent file:**
+```tsx
+// In client/pages/Index.tsx
+import { CalendarSidebar } from "../components/CalendarSidebar";
+// Error: Failed to resolve import "../components/CalendarSidebar"
+// The file client/components/CalendarSidebar.tsx doesn't exist!
+```
+
+✅ **CORRECT - Verify file exists first:**
+```bash
+# Use Read/Glob to check if client/components/CalendarSidebar.tsx exists
+# If it doesn't exist, either:
+# 1. Create the file first, then import it
+# 2. Fix the import path to point to an existing file
+```
+
+### Import Resolution Checklist:
+
+1. **Before writing an import:**
+   - Use Read or Glob to verify the target file exists
+   - Confirm the file is in the expected location per the project structure
+
+2. **Calculate relative paths correctly:**
+   - From `client/pages/Index.tsx` to `client/components/Foo.tsx` = `../components/Foo`
+   - From `client/App.tsx` to `client/pages/Index.tsx` = `./pages/Index`
+   - From `client/components/Bar.tsx` to `client/components/Foo.tsx` = `./Foo`
+
+3. **File extension rules:**
+   - React components: `.tsx`
+   - TypeScript utilities: `.ts`
+   - TypeScript type definitions: `.d.ts`
+   - Vite automatically resolves `.tsx` and `.ts` extensions, so you can omit them in imports
+
+4. **When creating new components:**
+   - Create the file FIRST using the Write tool
+   - THEN add import statements in other files
+   - Verify the file was created successfully before importing
+
+### Example Workflow:
+
+```tsx
+// Step 1: Check if the component exists
+// Use: Read("client/components/Calendar.tsx")
+
+// Step 2: If it doesn't exist, create it first
+// Use: Write tool to create client/components/Calendar.tsx
+
+// Step 3: Only then add the import in your page
+// In client/pages/Index.tsx:
+import { Calendar } from "../components/Calendar";
+```
+
 ## Material Design 3 Setup
 
 ### Available Components
