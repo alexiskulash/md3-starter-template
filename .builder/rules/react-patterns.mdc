@@ -1,0 +1,113 @@
+---
+description: React integration patterns for Material Web Components
+globs:
+  - "**/*.tsx"
+alwaysApply: false
+---
+
+# React Patterns for Material Web Components
+
+Material Web Components are **native web components**, not React components. This requires special handling for attributes, events, and state management.
+
+## Handling Boolean Attributes
+
+Boolean attributes must be handled carefully:
+
+❌ **WRONG:**
+
+
+<md-filled-button disabled={false}>Click Me</md-filled-button>
+// Sets disabled="false" which is truthy - button stays disabled!
+```
+
+✅ **CORRECT:**
+
+```tsx
+<md-filled-button disabled={isDisabled ? true : undefined}>
+  Click Me
+</md-filled-button>
+// Sets attribute when true, removes it when undefined
+```
+
+## Event Handling
+
+Material Web Components use **native DOM events**, not React synthetic events.
+
+### CRITICAL RULES:
+
+1. **Never use `onChange` on Material Web Components** - it won't fire
+2. **Use `onClick` for interactive components** (checkboxes, buttons, etc.)
+3. **For complex state changes, use refs with `addEventListener`**
+
+### Common Event Handlers:
+
+✅ **Checkboxes - Use `onClick`:**
+```tsx
+<md-checkbox
+  checked={isChecked ? true : undefined}
+  onClick={() => setIsChecked(!isChecked)}
+/>
+```
+
+❌ **WRONG - onChange doesn't work:**
+```tsx
+<md-checkbox
+  checked={isChecked}
+  onChange={() => setIsChecked(!isChecked)}  // WON'T FIRE!
+/>
+```
+
+✅ **Text Fields - Use `onInput`:**
+```tsx
+<md-filled-text-field
+  value={text}
+  onInput={(e: any) => setText(e.target.value)}
+/>
+```
+
+✅ **Buttons - Use `onClick`:**
+```tsx
+<md-filled-button onClick={handleClick}>
+  Click Me
+</md-filled-button>
+```
+
+**When in doubt:** Use `onClick` for interactive components, `onInput` for text fields.
+
+### Key Takeaway:
+- Material Web Components use native events - use `onClick` not `onChange`
+- Follow the Material Web Components event handling rules exactly
+- Test all interactive components for event handling
+
+## Form Validation
+
+Always use `useMemo` or `useCallback` for derived state that controls component behavior:
+
+```tsx
+const isFormValid = useMemo(() => {
+  return !!(field1 && field2 && field3);
+}, [field1, field2, field3]);
+```
+
+**Without `useMemo`, the value only calculates once and won't update when dependencies change.**
+
+## Component Organization
+
+As development progresses, break down complex UI into smaller components, avoiding very nested JSX trees.
+
+Even within a single page (route), feel free to create auxiliary extra smaller files to make the page more maintainable.
+
+Breaking big components into multiple files will help when making changes or refactors later.
+
+### Example Structure:
+
+```
+client/components/
+├── CalendarView/
+│   ├── CalendarView.tsx      # Main component
+│   ├── CalendarHeader.tsx    # Header section
+│   ├── CalendarGrid.tsx      # Grid display
+│   └── CalendarDay.tsx       # Individual day cell
+```
+
+This modular approach makes the codebase easier to maintain and update.

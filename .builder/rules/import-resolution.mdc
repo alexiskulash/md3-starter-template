@@ -1,0 +1,136 @@
+---
+description: Import resolution and verification best practices
+globs:
+alwaysApply: true
+---
+
+# Import Resolution Best Practices
+
+**CRITICAL**: Always verify files exist before importing them to prevent build errors.
+
+## General Import Resolution
+
+### Before Creating Any Import Statement:
+
+1. **Verify the file exists** - Use the Read or Glob tool to confirm the file is present
+2. **Check the correct relative path** - Calculate the path from the importing file to the target file
+3. **Use proper file extensions** - TypeScript/React files should use `.tsx` or `.ts` extensions
+4. **Respect case sensitivity** - File names are case-sensitive in most environments
+
+### Common Import Errors to Avoid:
+
+❌ **WRONG - Importing a non-existent file:**
+
+// In client/pages/Index.tsx
+import { CalendarSidebar } from "../components/CalendarSidebar";
+// Error: Failed to resolve import "../components/CalendarSidebar"
+// The file client/components/CalendarSidebar.tsx doesn't exist!
+```
+
+✅ **CORRECT - Verify file exists first:**
+```bash
+# Use Read/Glob to check if client/components/CalendarSidebar.tsx exists
+# If it doesn't exist, either:
+# 1. Create the file first, then import it
+# 2. Fix the import path to point to an existing file
+```
+
+### Import Resolution Checklist:
+
+1. **Before writing an import:**
+   - Use Read or Glob to verify the target file exists
+   - Confirm the file is in the expected location per the project structure
+
+2. **Calculate relative paths correctly:**
+   - From `client/pages/Index.tsx` to `client/components/Foo.tsx` = `../components/Foo`
+   - From `client/App.tsx` to `client/pages/Index.tsx` = `./pages/Index`
+   - From `client/components/Bar.tsx` to `client/components/Foo.tsx` = `./Foo`
+
+3. **File extension rules:**
+   - React components: `.tsx`
+   - TypeScript utilities: `.ts`
+   - TypeScript type definitions: `.d.ts`
+   - Vite automatically resolves `.tsx` and `.ts` extensions, so you can omit them in imports
+
+4. **When creating new components:**
+   - Create the file FIRST using the Write tool
+   - THEN add import statements in other files
+   - Verify the file was created successfully before importing
+
+### Example Workflow:
+
+```tsx
+// Step 1: Check if the component exists
+// Use: Read("client/components/Calendar.tsx")
+
+// Step 2: If it doesn't exist, create it first
+// Use: Write tool to create client/components/Calendar.tsx
+
+// Step 3: Only then add the import in your page
+// In client/pages/Index.tsx:
+import { Calendar } from "../components/Calendar";
+```
+
+## Material Web Component Import Verification
+
+### ⚠️ CRITICAL: Verifying Material Web Component Imports
+
+**CRITICAL**: Before importing any Material Web component, especially lab components, ALWAYS verify the exact import path exists.
+
+### Why This Matters
+
+Material Web lab components may have inconsistent folder naming:
+- ✅ `@material/web/labs/segmentedbutton/outlined-segmented-button.js`
+- ✅ `@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js` (note: one word, not two)
+- ❌ `@material/web/labs/segmentedbutton/outlined-segmented-button-set.js` (WRONG - doesn't exist)
+
+Lab components are experimental and may not be available or stable, which can break production builds.
+
+### Required Workflow
+
+1. **BEFORE** writing any import statement for lab components:
+   ```bash
+   # Check what's available in labs
+   ls node_modules/@material/web/labs/
+
+   # Check specific component folder contents
+   ls node_modules/@material/web/labs/[folder-name]/
+   ```
+
+2. **THEN** write the import using the verified path
+
+### Example
+
+❌ **WRONG - Assuming the path:**
+```typescript
+import "@material/web/labs/segmentedbutton/outlined-segmented-button-set.js";
+// Error: Failed to resolve import!
+```
+
+✅ **CORRECT - Verify first:**
+```bash
+$ ls node_modules/@material/web/labs/
+# Output shows: segmentedbutton/ and segmentedbuttonset/
+
+$ ls node_modules/@material/web/labs/segmentedbuttonset/
+# Output shows: outlined-segmented-button-set.js
+```
+```typescript
+import "@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js";
+```
+
+### Recommended Approach
+
+**Prefer stable components over lab components whenever possible:**
+
+✅ **Use stable alternatives:**
+```typescript
+// For segmented buttons, use a group of outlined buttons:
+import "@material/web/button/outlined-button.js";
+
+// Or use tabs for similar functionality:
+import "@material/web/tabs/tabs.js";
+import "@material/web/tabs/primary-tab.js";
+```
+
+This verification step prevents build errors and dev server failures.

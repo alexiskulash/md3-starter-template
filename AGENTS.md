@@ -16,6 +16,7 @@ A minimal, bare-bones starter application built exclusively with Material Design
 ```
 client/                   # React SPA frontend
 ├── pages/                # Route components (Index.tsx = home)
+├── components/           # Reusable UI components
 ├── types/                # TypeScript type declarations
 │   └── material-web.d.ts # Material Web Components types
 ├── App.tsx               # App entry point and SPA routing setup
@@ -28,324 +29,51 @@ server/                   # Express API backend
 shared/                   # Types used by both client & server
 └── api.ts                # Example of how to share api interfaces
 
+.builder/rules/           # AI development guidelines
+├── import-resolution.mdc       # Import verification best practices
+├── material-web-integration.mdc # Material Web components guide
+└── react-patterns.mdc          # React + Web Components patterns
+
 tailwind.config.ts        # Tailwind with MD3 color tokens
 ```
 
-## Import Resolution Best Practices
+## Critical Guidelines
 
-**CRITICAL**: Always verify files exist before importing them to prevent build errors.
+### 🔍 Import Resolution
 
-### Before Creating Any Import Statement:
+**Always verify imports exist before using them.** See detailed guidelines in:
+- `.builder/rules/import-resolution.mdc` - Complete import verification workflows
+- For Material Web components, verify paths especially for lab components
 
-1. **Verify the file exists** - Use the Read or Glob tool to confirm the file is present
-2. **Check the correct relative path** - Calculate the path from the importing file to the target file
-3. **Use proper file extensions** - TypeScript/React files should use `.tsx` or `.ts` extensions
-4. **Respect case sensitivity** - File names are case-sensitive in most environments
+### 🎨 Material Web Components
 
-### Common Import Errors to Avoid:
+**Use stable components from `@material/web/[category]/[component].js`**
 
-❌ **WRONG - Importing a non-existent file:**
-```tsx
-// In client/pages/Index.tsx
-import { CalendarSidebar } from "../components/CalendarSidebar";
-// Error: Failed to resolve import "../components/CalendarSidebar"
-// The file client/components/CalendarSidebar.tsx doesn't exist!
-```
+Common components available:
+- Buttons: `md-filled-button`, `md-outlined-button`, `md-text-button`
+- Cards: `md-elevated-card`, `md-filled-card`, `md-outlined-card`
+- Form inputs: `md-filled-text-field`, `md-checkbox`, `md-switch`, `md-slider`
+- Other: `md-icon`, `md-fab`, `md-chip`, `md-dialog`, `md-list`, `md-tabs`, `md-menu`
 
-✅ **CORRECT - Verify file exists first:**
-```bash
-# Use Read/Glob to check if client/components/CalendarSidebar.tsx exists
-# If it doesn't exist, either:
-# 1. Create the file first, then import it
-# 2. Fix the import path to point to an existing file
-```
+See complete component reference in:
+- `.builder/rules/material-web-integration.mdc`
 
-### Import Resolution Checklist:
+### ⚛️ React Integration
 
-1. **Before writing an import:**
-   - Use Read or Glob to verify the target file exists
-   - Confirm the file is in the expected location per the project structure
+**Material Web Components are native web components, not React components:**
 
-2. **Calculate relative paths correctly:**
-   - From `client/pages/Index.tsx` to `client/components/Foo.tsx` = `../components/Foo`
-   - From `client/App.tsx` to `client/pages/Index.tsx` = `./pages/Index`
-   - From `client/components/Bar.tsx` to `client/components/Foo.tsx` = `./Foo`
+Key patterns:
+- ✅ Use `onClick` for buttons, checkboxes, switches (NOT `onChange`)
+- ✅ Use `onInput` for text fields
+- ✅ Boolean attributes: `disabled={isDisabled ? true : undefined}`
+- ✅ Use `useMemo`/`useCallback` for derived state
 
-3. **File extension rules:**
-   - React components: `.tsx`
-   - TypeScript utilities: `.ts`
-   - TypeScript type definitions: `.d.ts`
-   - Vite automatically resolves `.tsx` and `.ts` extensions, so you can omit them in imports
-
-4. **When creating new components:**
-   - Create the file FIRST using the Write tool
-   - THEN add import statements in other files
-   - Verify the file was created successfully before importing
-
-### Example Workflow:
-
-```tsx
-// Step 1: Check if the component exists
-// Use: Read("client/components/Calendar.tsx")
-
-// Step 2: If it doesn't exist, create it first
-// Use: Write tool to create client/components/Calendar.tsx
-
-// Step 3: Only then add the import in your page
-// In client/pages/Index.tsx:
-import { Calendar } from "../components/Calendar";
-```
-
-## Material Design 3 Setup
-
-### ⚠️ CRITICAL: Verifying Material Web Component Imports
-
-**CRITICAL**: Before importing any Material Web component, especially lab components, ALWAYS verify the exact import path exists.
-
-#### Why This Matters
-
-Material Web lab components may have inconsistent folder naming:
-- ✅ `@material/web/labs/segmentedbutton/outlined-segmented-button.js`
-- ✅ `@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js` (note: one word, not two)
-- ❌ `@material/web/labs/segmentedbutton/outlined-segmented-button-set.js` (WRONG - doesn't exist)
-
-Lab components are experimental and may not be available or stable, which can break production builds.
-
-#### Required Workflow
-
-1. **BEFORE** writing any import statement for lab components:
-   ```bash
-   # Check what's available in labs
-   ls node_modules/@material/web/labs/
-
-   # Check specific component folder contents
-   ls node_modules/@material/web/labs/[folder-name]/
-   ```
-
-2. **THEN** write the import using the verified path
-
-#### Example
-
-❌ **WRONG - Assuming the path:**
-```typescript
-import "@material/web/labs/segmentedbutton/outlined-segmented-button-set.js";
-// Error: Failed to resolve import!
-```
-
-✅ **CORRECT - Verify first:**
-```bash
-$ ls node_modules/@material/web/labs/
-# Output shows: segmentedbutton/ and segmentedbuttonset/
-
-$ ls node_modules/@material/web/labs/segmentedbuttonset/
-# Output shows: outlined-segmented-button-set.js
-```
-```typescript
-import "@material/web/labs/segmentedbuttonset/outlined-segmented-button-set.js";
-```
-
-#### Recommended Approach
-
-**Prefer stable components over lab components whenever possible:**
-
-✅ **Use stable alternatives:**
-```typescript
-// For segmented buttons, use a group of outlined buttons:
-import "@material/web/button/outlined-button.js";
-
-// Or use tabs for similar functionality:
-import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
-```
-
-This verification step prevents build errors and dev server failures
-
-### Available Components
-
-This starter includes the official Material Web Components library with support for:
-
-**Buttons**
-
-- `<md-filled-button>` - High-emphasis primary actions
-- `<md-outlined-button>` - Medium-emphasis secondary actions
-- `<md-text-button>` - Low-emphasis tertiary actions
-- `<md-elevated-button>` - Actions needing visual separation
-- `<md-filled-tonal-button>` - Middle-ground emphasis
-
-**Cards**
-
-- `<md-elevated-card>` - Cards with shadow elevation
-- `<md-filled-card>` - Cards with tonal background
-- `<md-outlined-card>` - Cards with outline border
-
-**Form Inputs**
-
-- `<md-filled-text-field>` - Text inputs with filled style
-- `<md-outlined-text-field>` - Text inputs with outlined style
-- `<md-checkbox>` - Checkboxes
-- `<md-radio>` - Radio buttons
-- `<md-switch>` - Toggle switches
-- `<md-slider>` - Range sliders
-- `<md-filled-select>` / `<md-outlined-select>` - Dropdowns
-
-**Other Components**
-
-- `<md-icon>` - Material Icons
-- `<md-fab>` - Floating action buttons
-- `<md-chip>` variants - Chips for filters, inputs, etc.
-- `<md-dialog>` - Modal dialogs
-- `<md-list>` - Lists
-- `<md-tabs>` - Tab navigation
-- `<md-menu>` - Menus
-
-### Using Material Components
-
-1. **Import the web component:**
-
-```typescript
-import "@material/web/button/filled-button.js";
-```
-
-2. **Declare types (if TypeScript complains):**
-
-```typescript
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "md-filled-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-    }
-  }
-}
-```
-
-3. **Use in JSX:**
-
-```tsx
-<md-filled-button>Click Me</md-filled-button>
-```
-
-## Material Web Components - Important React Integration Notes
-
-### Handling Boolean Attributes
-
-Material Web Components are **native web components**, not React components. Boolean attributes must be handled carefully:
-
-❌ **WRONG:**
-
-```tsx
-<md-filled-button disabled={false}>Click Me</md-filled-button>
-// Sets disabled="false" which is truthy - button stays disabled!
-```
-
-✅ **CORRECT:**
-
-```tsx
-<md-filled-button disabled={isDisabled ? true : undefined}>
-  Click Me
-</md-filled-button>
-// Sets attribute when true, removes it when undefined
-```
-
-### Event Handling
-
-Material Web Components use **native DOM events**, not React synthetic events.
-
-**CRITICAL RULES:**
-
-1. **Never use `onChange` on Material Web Components** - it won't fire
-2. **Use `onClick` for interactive components** (checkboxes, buttons, etc.)
-3. **For complex state changes, use refs with `addEventListener`**
-
-**Common Event Handlers:**
-
-✅ **Checkboxes - Use `onClick`:**
-```tsx
-<md-checkbox
-  checked={isChecked ? true : undefined}
-  onClick={() => setIsChecked(!isChecked)}
-/>
-```
-
-❌ **WRONG - onChange doesn't work:**
-```tsx
-<md-checkbox
-  checked={isChecked}
-  onChange={() => setIsChecked(!isChecked)}  // WON'T FIRE!
-/>
-```
-
-✅ **Text Fields - Use `onInput`:**
-```tsx
-<md-filled-text-field
-  value={text}
-  onInput={(e: any) => setText(e.target.value)}
-/>
-```
-
-✅ **Buttons - Use `onClick`:**
-```tsx
-<md-filled-button onClick={handleClick}>
-  Click Me
-</md-filled-button>
-```
-
-**When in doubt:** Use `onClick` for interactive components, `onInput` for text fields.
-
-**Key Takeaway:**
-- Material Web Components use native events - use `onClick` not `onChange`
-- Follow the Material Web Components event handling rules from AGENTS.md exactly
-- Test all interactive components for event handling
-
-### Form Validation
-
-Always use `useMemo` or `useCallback` for derived state that controls component behavior:
-
-```tsx
-const isFormValid = useMemo(() => {
-  return !!(field1 && field2 && field3);
-}, [field1, field2, field3]);
-```
-
-**Without `useMemo`, the value only calculates once and won't update when dependencies change.**
-
-### Material Design 3 Color System
-
-All color tokens are defined in `client/global.css` using the MD3 color system:
-
-- **Primary**: Main brand color (purple by default)
-- **Secondary**: Supporting brand color
-- **Tertiary**: Accent color
-- **Surface**: Background for components
-- **Error**: Error states
-
-Colors are defined in HSL format for Tailwind compatibility and are available as both CSS custom properties and Tailwind utilities:
-
-```tsx
-// Using Tailwind classes
-<div className="bg-primary text-primary-foreground">
-
-// Using CSS custom properties
-<div style={{ color: "hsl(var(--md-sys-color-primary))" }}>
-```
-
-### Customizing the Theme
-
-To change colors:
-
-1. Open `client/global.css`
-2. Modify the HSL values in `:root` (light theme) and `.dark` (dark theme)
-3. Or use [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) to generate a complete palette
+See complete React patterns in:
+- `.builder/rules/react-patterns.mdc`
 
 ## SPA Routing System
 
-The routing system is powered by React Router 6:
-
-- `client/pages/Index.tsx` represents the home page
-- Routes are defined in `client/App.tsx` using `react-router-dom`
-- Route files are located in the `client/pages/` directory
+Routes are defined in `client/App.tsx` using React Router 6:
 
 ```typescript
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -357,6 +85,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 </Routes>
 ```
 
+- `client/pages/Index.tsx` = home page
+- Route files in `client/pages/` directory
+- Custom routes must be added BEFORE the `*` catch-all route
+
 ## Development Commands
 
 ```bash
@@ -367,18 +99,26 @@ pnpm typecheck  # TypeScript validation
 pnpm test       # Run Vitest tests
 ```
 
-## Adding New Material Components
+## Material Design 3 Color System
 
-1. Find the component in [Material Web docs](https://github.com/material-components/material-web)
-2. Import it in your component:
-   ```tsx
-   import "@material/web/[category]/[component-name].js";
-   ```
-3. Add TypeScript declarations if needed (see `client/types/material-web.d.ts`)
-4. Use the component in your JSX:
-   ```tsx
-   <md-component-name />
-   ```
+All color tokens are defined in `client/global.css`:
+
+```tsx
+// Using Tailwind classes
+<div className="bg-primary text-primary-foreground">
+
+// Using CSS custom properties
+<div style={{ color: "hsl(var(--md-sys-color-primary))" }}>
+```
+
+Available tokens:
+- **Primary**: Main brand color (purple by default)
+- **Secondary**: Supporting brand color
+- **Tertiary**: Accent color
+- **Surface**: Background for components
+- **Error**: Error states
+
+To customize: Edit `client/global.css` or use [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
 
 ## Express Server Integration
 
@@ -401,6 +141,11 @@ This starter is intentionally **minimal and bare-bones**:
 ❌ No authentication (add as needed)  
 ❌ No database integrations (add as needed)
 
+## Production Deployment
+
+- **Standard**: `pnpm build`
+- **Cloud Deployment**: Use Netlify or Vercel via their MCP integrations for easy deployment
+
 ## Resources
 
 - [Material Design 3 Guidelines](https://m3.material.io/)
@@ -409,10 +154,12 @@ This starter is intentionally **minimal and bare-bones**:
 - [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
 - [Builder.io Projects Documentation](https://www.builder.io/c/docs/projects)
 
-## Production Deployment
+## Detailed Guides
 
-- **Standard**: `pnpm build`
-- **Cloud Deployment**: Use Netlify or Vercel via their MCP integrations for easy deployment
+For comprehensive implementation details, see:
+- `.builder/rules/import-resolution.mdc` - Import verification workflows and common errors
+- `.builder/rules/material-web-integration.mdc` - Complete Material Web component reference
+- `.builder/rules/react-patterns.mdc` - React integration patterns and best practices
 
 ## Notes
 

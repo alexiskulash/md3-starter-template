@@ -1,0 +1,126 @@
+---
+description: Material Design 3 Web Components integration guide
+globs:
+  - "**/*.tsx"
+  - "**/*.ts"
+alwaysApply: false
+---
+
+# Material Design 3 Web Components Integration
+
+## Available Components
+
+This starter includes the official Material Web Components library with support for:
+
+### Buttons
+
+- `<md-filled-button>` - High-emphasis primary actions
+- `<md-outlined-button>` - Medium-emphasis secondary actions
+- `<md-text-button>` - Low-emphasis tertiary actions
+- `<md-elevated-button>` - Actions needing visual separation
+- `<md-filled-tonal-button>` - Middle-ground emphasis
+
+### Cards
+
+- `<md-elevated-card>` - Cards with shadow elevation
+- `<md-filled-card>` - Cards with tonal background
+- `<md-outlined-card>` - Cards with outline border
+
+### Form Inputs
+
+- `<md-filled-text-field>` - Text inputs with filled style
+- `<md-outlined-text-field>` - Text inputs with outlined style
+- `<md-checkbox>` - Checkboxes
+- `<md-radio>` - Radio buttons
+- `<md-switch>` - Toggle switches
+- `<md-slider>` - Range sliders
+- `<md-filled-select>` / `<md-outlined-select>` - Dropdowns
+
+### Other Components
+
+- `<md-icon>` - Material Icons
+- `<md-fab>` - Floating action buttons
+- `<md-chip>` variants - Chips for filters, inputs, etc.
+- `<md-dialog>` - Modal dialogs
+- `<md-list>` - Lists
+- `<md-tabs>` - Tab navigation
+- `<md-menu>` - Menus
+
+## Using Material Components
+
+### Basic Setup
+
+1. **Import the web component:**
+
+
+import "@material/web/button/filled-button.js";
+```
+
+2. **Declare types (if TypeScript complains):**
+
+```typescript
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "md-filled-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
+```
+
+3. **Use in JSX:**
+
+```tsx
+<md-filled-button>Click Me</md-filled-button>
+```
+
+## Material Design 3 Color System
+
+All color tokens are defined in `client/global.css` using the MD3 color system:
+
+- **Primary**: Main brand color (purple by default)
+- **Secondary**: Supporting brand color
+- **Tertiary**: Accent color
+- **Surface**: Background for components
+- **Error**: Error states
+
+Colors are defined in HSL format for Tailwind compatibility and are available as both CSS custom properties and Tailwind utilities:
+
+```tsx
+// Using Tailwind classes
+<div className="bg-primary text-primary-foreground">
+
+// Using CSS custom properties
+<div style={{ color: "hsl(var(--md-sys-color-primary))" }}>
+```
+
+## Customizing the Theme
+
+To change colors:
+
+1. Open `client/global.css`
+2. Modify the HSL values in `:root` (light theme) and `.dark` (dark theme)
+3. Or use [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) to generate a complete palette
+
+## Adding New Material Components
+
+1. Find the component in [Material Web docs](https://github.com/material-components/material-web)
+2. Import it in your component:
+   ```tsx
+   import "@material/web/[category]/[component-name].js";
+   ```
+3. Add TypeScript declarations if needed (see `client/types/material-web.d.ts`)
+4. Use the component in your JSX:
+   ```tsx
+   <md-component-name />
+   ```
+
+## Resources
+
+- [Material Design 3 Guidelines](https://m3.material.io/)
+- [Material Web Components](https://github.com/material-components/material-web)
+- [Material Icons](https://fonts.google.com/icons)
+- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
