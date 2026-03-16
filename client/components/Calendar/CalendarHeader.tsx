@@ -52,7 +52,7 @@ export default function CalendarHeader({
   return (
     <header
       style={{
-        background: "hsl(var(--md-sys-color-surface-container))",
+        background: "hsl(var(--md-sys-color-tertiary-container))",
         borderBottom: "1px solid hsl(var(--md-sys-color-outline-variant))",
         padding: "16px 24px",
       }}
@@ -73,7 +73,7 @@ export default function CalendarHeader({
             style={{
               fontSize: "24px",
               fontWeight: "500",
-              color: "hsl(var(--md-sys-color-on-surface))",
+              color: "hsl(var(--md-sys-color-on-tertiary-container))",
               margin: 0,
             }}
           >
@@ -102,7 +102,7 @@ export default function CalendarHeader({
             style={{
               fontSize: "18px",
               fontWeight: "500",
-              color: "hsl(var(--md-sys-color-on-surface))",
+              color: "hsl(var(--md-sys-color-on-tertiary-container))",
               margin: 0,
               minWidth: "200px",
               textAlign: "center",
@@ -134,7 +134,7 @@ export default function CalendarHeader({
                 color:
                   viewMode === "month"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-surface))",
+                    : "hsl(var(--md-sys-color-on-tertiary-container))",
               }}
             >
               Month
@@ -149,7 +149,7 @@ export default function CalendarHeader({
                 color:
                   viewMode === "year"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-surface))",
+                    : "hsl(var(--md-sys-color-on-tertiary-container))",
               }}
             >
               Year

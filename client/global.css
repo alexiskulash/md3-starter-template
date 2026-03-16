@@ -24,10 +24,10 @@
     --md-sys-color-on-secondary-container: 258 30% 20%;
 
     /* Tertiary */
-    --md-sys-color-tertiary: 30 100% 55%;
-    --md-sys-color-on-tertiary: 0 0% 100%;
-    --md-sys-color-tertiary-container: 30 100% 90%;
-    --md-sys-color-on-tertiary-container: 30 100% 20%;
+    --md-sys-color-tertiary: 52 95% 55%;
+    --md-sys-color-on-tertiary: 52 95% 10%;
+    --md-sys-color-tertiary-container: 52 95% 80%;
+    --md-sys-color-on-tertiary-container: 52 95% 15%;
 
     /* Error */
     --md-sys-color-error: 0 85% 60%;
@@ -78,10 +78,10 @@
     --md-sys-color-secondary-container: 258 30% 35%;
     --md-sys-color-on-secondary-container: 258 30% 90%;
 
-    --md-sys-color-tertiary: 30 100% 70%;
-    --md-sys-color-on-tertiary: 30 100% 20%;
-    --md-sys-color-tertiary-container: 30 100% 30%;
-    --md-sys-color-on-tertiary-container: 30 100% 90%;
+    --md-sys-color-tertiary: 52 95% 70%;
+    --md-sys-color-on-tertiary: 52 95% 15%;
+    --md-sys-color-tertiary-container: 52 95% 25%;
+    --md-sys-color-on-tertiary-container: 52 95% 85%;
 
     --md-sys-color-error: 0 85% 70%;
     --md-sys-color-on-error: 0 85% 20%;
