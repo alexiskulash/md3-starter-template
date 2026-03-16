@@ -4,6 +4,7 @@ import { sampleCalendars, sampleEvents } from "../data/sampleData";
 import CalendarSidebar from "../components/CalendarSidebar";
 import MonthView from "../components/MonthView";
 import YearView from "../components/YearView";
+import AgendaView from "../components/AgendaView";
 import EventDialog from "../components/EventDialog";
 import { useCalendar } from "../contexts/CalendarContext";
 import { getMonthYear } from "../utils/dateUtils";
@@ -73,7 +74,7 @@ function CalendarContent() {
   const handleNext = () => {
     if (currentView === "month") {
       goToNextMonth();
-    } else {
+    } else if (currentView === "year") {
       goToNextYear();
     }
   };
@@ -81,7 +82,7 @@ function CalendarContent() {
   const handlePrev = () => {
     if (currentView === "month") {
       goToPrevMonth();
-    } else {
+    } else if (currentView === "year") {
       goToPrevYear();
     }
   };
@@ -89,7 +90,9 @@ function CalendarContent() {
   const displayTitle =
     currentView === "month"
       ? getMonthYear(currentMonth)
-      : currentMonth.getFullYear().toString();
+      : currentView === "year"
+      ? currentMonth.getFullYear().toString()
+      : "Upcoming Events";
 
   return (
     <div
@@ -135,12 +138,16 @@ function CalendarContent() {
           {/* Navigation */}
           <div className="flex items-center gap-2">
             <md-outlined-button onClick={goToToday}>Today</md-outlined-button>
-            <md-icon-button onClick={handlePrev}>
-              <md-icon>chevron_left</md-icon>
-            </md-icon-button>
-            <md-icon-button onClick={handleNext}>
-              <md-icon>chevron_right</md-icon>
-            </md-icon-button>
+            {currentView !== "agenda" && (
+              <>
+                <md-icon-button onClick={handlePrev}>
+                  <md-icon>chevron_left</md-icon>
+                </md-icon-button>
+                <md-icon-button onClick={handleNext}>
+                  <md-icon>chevron_right</md-icon>
+                </md-icon-button>
+              </>
+            )}
             <h2
               className="text-lg font-medium min-w-[180px] text-center"
               style={{ color: "hsl(var(--md-sys-color-on-surface))" }}
@@ -173,6 +180,17 @@ function CalendarContent() {
             >
               Year
             </md-outlined-button>
+            <md-outlined-button
+              onClick={() => setCurrentView("agenda")}
+              style={{
+                backgroundColor:
+                  currentView === "agenda"
+                    ? "hsl(var(--md-sys-color-primary-container))"
+                    : "transparent",
+              }}
+            >
+              Agenda
+            </md-outlined-button>
           </div>
         </div>
       </header>
@@ -193,6 +211,9 @@ function CalendarContent() {
             />
           )}
           {currentView === "year" && <YearView onDateClick={handleDateClick} />}
+          {currentView === "agenda" && (
+            <AgendaView onEventClick={handleEventClick} />
+          )}
         </div>
       </div>
 
