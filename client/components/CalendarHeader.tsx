@@ -58,7 +58,7 @@ export function CalendarHeader() {
       <div
         style={{
           minHeight: '64px',
-          backgroundColor: 'hsl(var(--md-sys-color-surface-container))',
+          backgroundColor: 'rgba(231, 14, 14, 1)',
           borderBottom: '1px solid hsl(var(--md-sys-color-outline-variant))',
           display: 'flex',
           alignItems: 'center',
