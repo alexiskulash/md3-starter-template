@@ -1,4 +1,6 @@
 import "@material/web/checkbox/checkbox.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/icon/icon.js";
 import type { Calendar } from "../types/calendar";
 
 interface CalendarSidebarProps {
@@ -71,19 +73,51 @@ export function CalendarSidebar({
     >
       {/* Mini Calendar */}
       <div>
-        <h3
+        {/* Mini calendar header with navigation */}
+        <div
           style={{
-            fontSize: "14px",
-            fontWeight: "500",
-            color: "hsl(var(--md-sys-color-on-surface))",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
             marginBottom: "12px",
           }}
         >
-          {selectedDate.toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-          })}
-        </h3>
+          <md-icon-button
+            onClick={() => {
+              const newDate = new Date(selectedDate);
+              newDate.setMonth(newDate.getMonth() - 1);
+              onDateSelect(newDate);
+            }}
+          >
+            <md-icon>chevron_left</md-icon>
+          </md-icon-button>
+
+          <h3
+            style={{
+              fontSize: "14px",
+              fontWeight: "500",
+              color: "hsl(var(--md-sys-color-on-surface))",
+              margin: 0,
+              textAlign: "center",
+              flex: 1,
+            }}
+          >
+            {selectedDate.toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
+          </h3>
+
+          <md-icon-button
+            onClick={() => {
+              const newDate = new Date(selectedDate);
+              newDate.setMonth(newDate.getMonth() + 1);
+              onDateSelect(newDate);
+            }}
+          >
+            <md-icon>chevron_right</md-icon>
+          </md-icon-button>
+        </div>
 
         <div
           style={{
