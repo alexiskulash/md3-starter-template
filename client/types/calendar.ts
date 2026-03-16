@@ -18,7 +18,7 @@ export interface CalendarEvent {
   calendarId: string;
 }
 
-export type ViewType = "month" | "year";
+export type ViewType = "month" | "year" | "agenda";
 
 export interface CalendarState {
   calendars: Calendar[];

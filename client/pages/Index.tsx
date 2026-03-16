@@ -5,6 +5,7 @@ import { CalendarHeader } from "../components/CalendarHeader";
 import { CalendarSidebar } from "../components/CalendarSidebar";
 import { MonthView } from "../components/MonthView";
 import { YearView } from "../components/YearView";
+import { AgendaView } from "../components/AgendaView";
 import { EventDialog } from "../components/EventDialog";
 import type { CalendarEvent } from "../types/calendar";
 
@@ -227,12 +228,19 @@ export default function Index() {
             onDateSelect={calendar.setSelectedDate}
             onEventClick={handleEventClick}
           />
-        ) : (
+        ) : calendar.currentView === "year" ? (
           <YearView
             currentDate={calendar.selectedDate}
             events={calendar.visibleEvents}
             selectedDate={calendar.selectedDate}
             onDateSelect={calendar.setSelectedDate}
+          />
+        ) : (
+          <AgendaView
+            currentDate={calendar.selectedDate}
+            events={calendar.visibleEvents}
+            calendars={calendar.calendars}
+            onEventClick={handleEventClick}
           />
         )}
       </div>

@@ -5,9 +5,9 @@ import "@material/web/icon/icon.js";
 
 interface CalendarHeaderProps {
   currentDate: Date;
-  currentView: "month" | "year";
+  currentView: "month" | "year" | "agenda";
   theme: "light" | "dark";
-  onViewChange: (view: "month" | "year") => void;
+  onViewChange: (view: "month" | "year" | "agenda") => void;
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
@@ -146,6 +146,28 @@ export function CalendarHeader({
               }}
             >
               Year
+            </button>
+            <button
+              onClick={() => onViewChange("agenda")}
+              style={{
+                padding: "8px 16px",
+                border: "none",
+                borderLeft: "1px solid hsl(var(--md-sys-color-outline))",
+                background:
+                  currentView === "agenda"
+                    ? "hsl(var(--md-sys-color-secondary-container))"
+                    : "transparent",
+                color:
+                  currentView === "agenda"
+                    ? "hsl(var(--md-sys-color-on-secondary-container))"
+                    : "hsl(var(--md-sys-color-on-surface))",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+                transition: "all 0.2s",
+              }}
+            >
+              Agenda
             </button>
           </div>
 
