@@ -6,21 +6,25 @@ import "@material/web/icon/icon.js";
 interface CalendarHeaderProps {
   currentDate: Date;
   currentView: "month" | "year";
+  theme: "light" | "dark";
   onViewChange: (view: "month" | "year") => void;
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
   onCreateEvent: () => void;
+  onThemeToggle: () => void;
 }
 
 export function CalendarHeader({
   currentDate,
   currentView,
+  theme,
   onViewChange,
   onPrevious,
   onNext,
   onToday,
   onCreateEvent,
+  onThemeToggle,
 }: CalendarHeaderProps) {
   const formatTitle = () => {
     if (currentView === "month") {
@@ -144,6 +148,10 @@ export function CalendarHeader({
               Year
             </button>
           </div>
+
+          <md-icon-button onClick={onThemeToggle} title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}>
+            <md-icon>{theme === "light" ? "dark_mode" : "light_mode"}</md-icon>
+          </md-icon-button>
 
           <md-filled-button onClick={onCreateEvent}>
             <md-icon slot="icon">add</md-icon>

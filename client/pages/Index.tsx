@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCalendar } from "../hooks/useCalendar";
+import { useTheme } from "../hooks/useTheme";
 import { CalendarHeader } from "../components/CalendarHeader";
 import { CalendarSidebar } from "../components/CalendarSidebar";
 import { MonthView } from "../components/MonthView";
@@ -9,6 +10,7 @@ import type { CalendarEvent } from "../types/calendar";
 
 export default function Index() {
   const calendar = useCalendar();
+  const { theme, toggleTheme } = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
@@ -194,11 +196,13 @@ export default function Index() {
       <CalendarHeader
         currentDate={calendar.selectedDate}
         currentView={calendar.currentView}
+        theme={theme}
         onViewChange={calendar.setCurrentView}
         onPrevious={handleNavigation().onPrevious}
         onNext={handleNavigation().onNext}
         onToday={calendar.goToToday}
         onCreateEvent={handleCreateEvent}
+        onThemeToggle={toggleTheme}
       />
 
       {/* Main content area with sidebar */}
