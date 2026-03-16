@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCalendar } from '../contexts/CalendarContext';
 import { CalendarEvent } from '../types/calendar';
-import { formatDateISO, getCurrentTime, getDefaultEndTime } from '../utils/calendar';
+import { formatDateISO, getCurrentTime, getDefaultEndTime, parseISODate } from '../utils/calendar';
 import { parseNaturalLanguage, isParsed, getParserExamples } from '../utils/naturalLanguageParser';
 
 // Import Material Web chip components
@@ -18,7 +18,7 @@ interface EventDialogProps {
 }
 
 export function EventDialog({ open, onClose, event, defaultDate, onDelete }: EventDialogProps) {
-  const { state, addEvent, updateEvent, getCalendarById } = useCalendar();
+  const { state, addEvent, updateEvent, getCalendarById, setSelectedDate, setViewDate } = useCalendar();
   
   const isEditMode = !!event;
   
@@ -141,6 +141,12 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
       updateEvent(event.id, eventData);
     } else {
       addEvent(eventData);
+
+      // Navigate to the event's date after creation (if not edit mode)
+      // This ensures the newly created event is visible
+      const eventDate = parseISODate(startDate);
+      setSelectedDate(eventDate);
+      setViewDate(eventDate);
     }
 
     onClose();
