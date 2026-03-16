@@ -24,10 +24,10 @@
     --md-sys-color-on-secondary-container: 258 30% 20%;
 
     /* Tertiary */
-    --md-sys-color-tertiary: 30 100% 55%;
-    --md-sys-color-on-tertiary: 0 0% 100%;
-    --md-sys-color-tertiary-container: 30 100% 90%;
-    --md-sys-color-on-tertiary-container: 30 100% 20%;
+    --md-sys-color-tertiary: 52 95% 55%;
+    --md-sys-color-on-tertiary: 52 95% 10%;
+    --md-sys-color-tertiary-container: 52 95% 80%;
+    --md-sys-color-on-tertiary-container: 52 95% 15%;
 
     /* Error */
     --md-sys-color-error: 0 85% 60%;
@@ -49,6 +49,13 @@
     --md-sys-color-outline: 258 10% 50%;
     --md-sys-color-outline-variant: 258 10% 80%;
 
+    /* Surface containers */
+    --md-sys-color-surface-container-lowest: 0 0% 100%;
+    --md-sys-color-surface-container-low: 258 10% 96%;
+    --md-sys-color-surface-container: 258 10% 94%;
+    --md-sys-color-surface-container-high: 258 10% 92%;
+    --md-sys-color-surface-container-highest: 258 10% 90%;
+
     /* Shape tokens */
     --md-sys-shape-corner-none: 0px;
     --md-sys-shape-corner-extra-small: 4px;
@@ -61,36 +68,43 @@
 
   .dark {
     /* Dark theme - Material Design 3 dark colors */
-    --md-sys-color-primary: 220 100% 75%;
-    --md-sys-color-on-primary: 220 100% 20%;
-    --md-sys-color-primary-container: 220 100% 30%;
-    --md-sys-color-on-primary-container: 220 100% 90%;
+    --md-sys-color-primary: 258 100% 80%;
+    --md-sys-color-on-primary: 258 100% 25%;
+    --md-sys-color-primary-container: 258 100% 35%;
+    --md-sys-color-on-primary-container: 258 100% 95%;
 
-    --md-sys-color-secondary: 220 30% 75%;
-    --md-sys-color-on-secondary: 220 30% 20%;
-    --md-sys-color-secondary-container: 220 30% 30%;
-    --md-sys-color-on-secondary-container: 220 30% 90%;
+    --md-sys-color-secondary: 258 30% 75%;
+    --md-sys-color-on-secondary: 258 30% 25%;
+    --md-sys-color-secondary-container: 258 30% 35%;
+    --md-sys-color-on-secondary-container: 258 30% 90%;
 
-    --md-sys-color-tertiary: 30 100% 70%;
-    --md-sys-color-on-tertiary: 30 100% 20%;
-    --md-sys-color-tertiary-container: 30 100% 30%;
-    --md-sys-color-on-tertiary-container: 30 100% 90%;
+    --md-sys-color-tertiary: 52 95% 70%;
+    --md-sys-color-on-tertiary: 52 95% 15%;
+    --md-sys-color-tertiary-container: 52 95% 25%;
+    --md-sys-color-on-tertiary-container: 52 95% 85%;
 
     --md-sys-color-error: 0 85% 70%;
     --md-sys-color-on-error: 0 85% 20%;
     --md-sys-color-error-container: 0 85% 30%;
     --md-sys-color-on-error-container: 0 85% 90%;
 
-    --md-sys-color-surface: 220 15% 10%;
-    --md-sys-color-on-surface: 220 5% 90%;
-    --md-sys-color-surface-variant: 220 10% 20%;
-    --md-sys-color-on-surface-variant: 220 5% 80%;
+    --md-sys-color-surface: 258 15% 12%;
+    --md-sys-color-on-surface: 258 5% 95%;
+    --md-sys-color-surface-variant: 258 10% 20%;
+    --md-sys-color-on-surface-variant: 258 5% 85%;
 
-    --md-sys-color-background: 220 15% 8%;
-    --md-sys-color-on-background: 220 5% 90%;
+    --md-sys-color-background: 258 15% 10%;
+    --md-sys-color-on-background: 258 5% 95%;
 
-    --md-sys-color-outline: 220 5% 60%;
-    --md-sys-color-outline-variant: 220 10% 30%;
+    --md-sys-color-outline: 258 5% 60%;
+    --md-sys-color-outline-variant: 258 10% 30%;
+
+    /* Surface containers for dark theme */
+    --md-sys-color-surface-container-lowest: 258 15% 8%;
+    --md-sys-color-surface-container-low: 258 15% 11%;
+    --md-sys-color-surface-container: 258 15% 14%;
+    --md-sys-color-surface-container-high: 258 15% 17%;
+    --md-sys-color-surface-container-highest: 258 15% 22%;
   }
 }
 
