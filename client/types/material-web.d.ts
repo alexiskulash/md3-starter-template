@@ -53,6 +53,14 @@ declare namespace JSX {
     >;
 
     // Icon Buttons
+    "md-icon-button": React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement> & {
+        disabled?: boolean;
+        toggle?: boolean;
+        selected?: boolean;
+      },
+      HTMLElement
+    >;
     "md-filled-icon-button": React.DetailedHTMLProps<
       React.HTMLAttributes<HTMLElement> & {
         disabled?: boolean;
@@ -102,7 +110,10 @@ declare namespace JSX {
           | "password"
           | "search"
           | "tel"
-          | "url";
+          | "url"
+          | "date"
+          | "time"
+          | "datetime-local";
       },
       HTMLElement
     >;
