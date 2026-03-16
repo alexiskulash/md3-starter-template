@@ -84,6 +84,12 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
     }
   }, [open, isEditMode]);
 
+  // Parse natural language input (memoized)
+  const parsedNl = useMemo(() => {
+    if (!nlInput.trim() || isEditMode) return null;
+    return parseNaturalLanguage(nlInput);
+  }, [nlInput, isEditMode]);
+
   // Parse natural language input and update form fields
   useEffect(() => {
     if (!parsedNl) return;
@@ -112,12 +118,6 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
       }
     }
   }, [parsedNl, nlInput, state.calendars]);
-
-  // Parse natural language input (memoized)
-  const parsedNl = useMemo(() => {
-    if (!nlInput.trim() || isEditMode) return null;
-    return parseNaturalLanguage(nlInput);
-  }, [nlInput, isEditMode]);
 
   // Validate form
   const isValid = useMemo(() => {
