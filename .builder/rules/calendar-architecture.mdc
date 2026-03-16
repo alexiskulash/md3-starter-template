@@ -1,0 +1,163 @@
+---
+description: Calendar application architecture and component organization
+globs:
+  - client/components/**/*.tsx
+  - client/context/**/*.tsx
+  - client/pages/Index.tsx
+alwaysApply: false
+---
+
+# Calendar Application Architecture
+
+## Overview
+
+This calendar application follows the PRD requirements and implements a Google Calendar-inspired interface using Material Design 3 components.
+
+## Architecture
+
+### State Management
+
+- **CalendarContext** (`client/context/CalendarContext.tsx`): Central state management for:
+  - Calendars (Personal, Work, Family) with toggle functionality
+  - Events with CRUD operations
+  - Selected date and view mode
+  - Uses React Context API for global state
+
+### Component Structure
+
+#### Main Components
+
+1. **Index.tsx** - Main page component
+   - Wraps app in CalendarProvider
+   - Manages dialog state
+   - Coordinates between header, sidebar, and views
+
+2. **CalendarHeader** - Top navigation bar
+   - Create event button
+   - Navigation controls (Previous, Next, Today)
+   - View mode switcher (Month/Year)
+   - Displays current period
+
+3. **CalendarSidebar** - Left sidebar
+   - MiniCalendar for quick date navigation
+   - Calendar list with checkboxes for filtering
+   - Hidden on mobile (< 768px)
+
+4. **MonthView** - Traditional calendar grid
+   - 6 weeks x 7 days grid
+   - Shows up to 3 events per day
+   - "+X more" indicator for additional events
+   - Click date to create event
+   - Click event to edit
+
+5. **YearView** - 12-month overview
+   - Grid of 12 mini calendars
+   - Shows which dates have events (dots)
+   - Click any date to select and create event
+
+6. **EventDialog** - Create/Edit modal
+   - Title, description, date/time fields
+   - Calendar selection dropdown
+   - Validation: disables save until all required fields filled
+   - Delete with confirmation
+   - Smart defaults from PRD
+
+7. **MiniCalendar** - Compact calendar in sidebar
+   - Month navigation
+   - Date selection
+   - Shows event indicators (dots)
+
+### Utilities
+
+- **dateUtils.ts** - Date manipulation helpers
+  - Format dates and times
+  - Navigate months/years
+  - Get calendar grids
+  - Check today, same day, etc.
+
+## Key Features Implemented
+
+### Event Management
+- ✅ Create events with title, date/time, description
+- ✅ Edit existing events
+- ✅ Delete with confirmation
+- ✅ Color-coded by calendar
+- ✅ Events display time + title
+
+### Calendar Organization
+- ✅ Multiple calendars (Personal, Work, Family)
+- ✅ Toggle calendars on/off to filter events
+- ✅ Color-coded calendars
+- ✅ Visual muting when disabled
+
+### Views
+- ✅ Month View - traditional grid
+- ✅ Year View - 12 mini months
+- ❌ Week/Day Views - planned for future
+
+### Navigation
+- ✅ Previous/Next buttons
+- ✅ Today button
+- ✅ View switcher
+- ✅ Mini calendar date selection
+- ✅ Click dates to select
+
+### Smart Defaults (from PRD)
+- ✅ Selected date → event defaults to that date
+- ✅ Otherwise → defaults to today
+- ✅ Time → current hour + 1 hour duration
+- ✅ Calendar → first enabled calendar
+
+### Mobile Responsive
+- ✅ Sidebar hidden on mobile (< 768px)
+- ✅ Header reorganizes on small screens
+- ✅ Touch-friendly tap targets
+- ✅ Responsive grid layouts
+
+## Sample Data
+
+8 sample events across 3 calendars demonstrating:
+- Different times and dates
+- Multiple events per day
+- Events spread across calendars
+- Various durations
+
+## Material Web Components Used
+
+- `md-filled-button` - Primary actions
+- `md-outlined-button` - Secondary actions, view switcher
+- `md-text-button` - Dialog actions
+- `md-icon-button` - Navigation arrows
+- `md-icon` - Icons
+- `md-dialog` - Event create/edit modal
+- `md-filled-text-field` - Form inputs
+- `md-filled-select` / `md-select-option` - Calendar picker
+- `md-checkbox` - Calendar toggles
+
+## Styling Approach
+
+- Material Design 3 color tokens from `global.css`
+- Inline styles for component-specific layouts
+- CSS classes for responsive breakpoints
+- Hover states for interactive elements
+- Smooth transitions
+
+## Future Enhancements
+
+As noted in PRD, future versions could add:
+- Recurring events
+- All-day events
+- Week/Day views
+- Drag-and-drop rescheduling
+- Search and advanced filters
+- Cloud sync
+- Notifications
+- Accessibility improvements (keyboard navigation, ARIA labels)
+
+## Development Notes
+
+- All components use React hooks
+- Event handlers follow Material Web Component patterns (onClick, onInput)
+- Boolean attributes handled correctly (true/undefined pattern)
+- useMemo for form validation
+- Component files kept focused and modular

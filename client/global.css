@@ -145,3 +145,21 @@ md-filled-text-field {
     var(--md-sys-color-on-surface-variant)
   );
 }
+
+/* Additional MD3 tokens for calendar app */
+:root {
+  --md-sys-color-surface-container-low: 258 10% 96%;
+  --md-sys-color-surface-container-highest: 258 10% 90%;
+}
+
+.dark {
+  --md-sys-color-surface-container-low: 220 15% 15%;
+  --md-sys-color-surface-container-highest: 220 15% 25%;
+}
+
+/* Mobile responsiveness for calendar */
+@media (max-width: 768px) {
+  .calendar-sidebar {
+    display: none !important;
+  }
+}
