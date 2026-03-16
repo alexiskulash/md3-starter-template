@@ -145,3 +145,10 @@ md-filled-text-field {
     var(--md-sys-color-on-surface-variant)
   );
 }
+
+/* Calendar responsive styles */
+@media (max-width: 768px) {
+  .sidebar-container {
+    display: none;
+  }
+}

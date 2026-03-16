@@ -1,278 +1,251 @@
-import { useEffect } from "react";
-
-// Import Material Design 3 web components
-import "@material/web/button/filled-button.js";
-import "@material/web/button/outlined-button.js";
-import "@material/web/button/text-button.js";
-import "@material/web/labs/card/elevated-card.js";
-import "@material/web/icon/icon.js";
-
-// Declare custom elements for TypeScript
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "md-filled-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-outlined-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-text-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-elevated-card": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-icon": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-    }
-  }
-}
+import { useState, useEffect } from "react";
+import { useCalendar } from "../hooks/useCalendar";
+import { CalendarHeader } from "../components/CalendarHeader";
+import { CalendarSidebar } from "../components/CalendarSidebar";
+import { MonthView } from "../components/MonthView";
+import { YearView } from "../components/YearView";
+import { EventDialog } from "../components/EventDialog";
+import type { CalendarEvent } from "../types/calendar";
 
 export default function Index() {
+  const calendar = useCalendar();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+
+  // Populate with sample events
   useEffect(() => {
-    // Material Design 3 components are ready
-    console.log("Material Design 3 Starter Ready");
+    // Only populate if there are no events
+    if (calendar.events.length === 0) {
+      const now = new Date();
+      const today = now.toISOString().split("T")[0];
+
+      // Helper to create date strings
+      const getDateStr = (daysOffset: number) => {
+        const date = new Date(now);
+        date.setDate(date.getDate() + daysOffset);
+        return date.toISOString().split("T")[0];
+      };
+
+      const sampleEvents = [
+        {
+          title: "Team Standup",
+          startDate: today,
+          endDate: today,
+          startTime: "10:00",
+          endTime: "10:30",
+          description: "Daily team sync meeting",
+          calendarId: "work",
+        },
+        {
+          title: "Project Review",
+          startDate: getDateStr(2),
+          endDate: getDateStr(2),
+          startTime: "14:00",
+          endTime: "15:30",
+          description: "Q1 project review with stakeholders",
+          calendarId: "work",
+        },
+        {
+          title: "Dentist Appointment",
+          startDate: getDateStr(5),
+          endDate: getDateStr(5),
+          startTime: "09:00",
+          endTime: "10:00",
+          description: "Regular checkup",
+          calendarId: "personal",
+        },
+        {
+          title: "Gym Session",
+          startDate: getDateStr(1),
+          endDate: getDateStr(1),
+          startTime: "06:30",
+          endTime: "07:30",
+          description: "Morning workout",
+          calendarId: "personal",
+        },
+        {
+          title: "Family Dinner",
+          startDate: getDateStr(3),
+          endDate: getDateStr(3),
+          startTime: "18:00",
+          endTime: "20:00",
+          description: "Dinner at Mom's place",
+          calendarId: "family",
+        },
+        {
+          title: "Client Presentation",
+          startDate: getDateStr(7),
+          endDate: getDateStr(7),
+          startTime: "11:00",
+          endTime: "12:00",
+          description: "Present new design proposals",
+          calendarId: "work",
+        },
+        {
+          title: "Weekend Getaway",
+          startDate: getDateStr(10),
+          endDate: getDateStr(12),
+          startTime: "09:00",
+          endTime: "17:00",
+          description: "Road trip to the mountains",
+          calendarId: "personal",
+        },
+        {
+          title: "Birthday Party",
+          startDate: getDateStr(15),
+          endDate: getDateStr(15),
+          startTime: "15:00",
+          endTime: "18:00",
+          description: "Sarah's birthday celebration",
+          calendarId: "family",
+        },
+        {
+          title: "Team Building Event",
+          startDate: getDateStr(20),
+          endDate: getDateStr(20),
+          startTime: "13:00",
+          endTime: "17:00",
+          description: "Outdoor team building activities",
+          calendarId: "work",
+        },
+        {
+          title: "Yoga Class",
+          startDate: getDateStr(-2),
+          endDate: getDateStr(-2),
+          startTime: "07:00",
+          endTime: "08:00",
+          description: "Morning yoga session",
+          calendarId: "personal",
+        },
+        {
+          title: "Budget Planning",
+          startDate: getDateStr(-5),
+          endDate: getDateStr(-5),
+          startTime: "10:00",
+          endTime: "11:30",
+          description: "Monthly budget review",
+          calendarId: "work",
+        },
+        {
+          title: "Movie Night",
+          startDate: getDateStr(8),
+          endDate: getDateStr(8),
+          startTime: "19:00",
+          endTime: "22:00",
+          description: "Family movie night at home",
+          calendarId: "family",
+        },
+      ];
+
+      sampleEvents.forEach((event) => calendar.createEvent(event));
+    }
   }, []);
+
+  const handleCreateEvent = () => {
+    setEditingEvent(null);
+    setDialogOpen(true);
+  };
+
+  const handleEventClick = (event: CalendarEvent) => {
+    setEditingEvent(event);
+    setDialogOpen(true);
+  };
+
+  const handleSaveEvent = (eventData: Omit<CalendarEvent, "id">) => {
+    if (editingEvent) {
+      calendar.updateEvent(editingEvent.id, eventData);
+    } else {
+      calendar.createEvent(eventData);
+    }
+    setDialogOpen(false);
+    setEditingEvent(null);
+  };
+
+  const handleDeleteEvent = (eventId: string) => {
+    calendar.deleteEvent(eventId);
+    setDialogOpen(false);
+    setEditingEvent(null);
+  };
+
+  const handleNavigation = () => {
+    if (calendar.currentView === "month") {
+      return {
+        onPrevious: calendar.goToPreviousMonth,
+        onNext: calendar.goToNextMonth,
+      };
+    } else {
+      return {
+        onPrevious: calendar.goToPreviousYear,
+        onNext: calendar.goToNextYear,
+      };
+    }
+  };
 
   return (
     <div
       style={{
-        minHeight: "100vh",
-        background: "hsl(var(--md-sys-color-background))",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
+        flexDirection: "column",
+        height: "100vh",
+        background: "hsl(var(--md-sys-color-background))",
       }}
     >
-      <div style={{ width: "100%", maxWidth: "768px" }}>
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
-          <h1
-            style={{
-              fontSize: "48px",
-              fontWeight: "700",
-              color: "hsl(var(--md-sys-color-primary))",
-              marginBottom: "16px",
-              lineHeight: "1.2",
-            }}
-          >
-            Material Design 3
-          </h1>
-          <p
-            style={{
-              fontSize: "20px",
-              color: "hsl(var(--md-sys-color-on-surface-variant))",
-              lineHeight: "1.4",
-            }}
-          >
-            A minimal starter for rapid prototyping with Material Design 3
-          </p>
+      {/* Header */}
+      <CalendarHeader
+        currentDate={calendar.selectedDate}
+        currentView={calendar.currentView}
+        onViewChange={calendar.setCurrentView}
+        onPrevious={handleNavigation().onPrevious}
+        onNext={handleNavigation().onNext}
+        onToday={calendar.goToToday}
+        onCreateEvent={handleCreateEvent}
+      />
+
+      {/* Main content area with sidebar */}
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* Sidebar - hidden on mobile */}
+        <div className="sidebar-container">
+          <CalendarSidebar
+            calendars={calendar.calendars}
+            selectedDate={calendar.selectedDate}
+            onToggleCalendar={calendar.toggleCalendar}
+            onDateSelect={calendar.setSelectedDate}
+          />
         </div>
 
-        {/* Main Card */}
-        <md-elevated-card style={{ width: "100%", marginBottom: "24px" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "32px",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "24px",
-                fontWeight: "500",
-                color: "hsl(var(--md-sys-color-on-surface))",
-                marginBottom: "16px",
-                lineHeight: "1.33",
-              }}
-            >
-              Welcome to MD3 Starter
-            </h2>
-            <p
-              style={{
-                fontSize: "16px",
-                color: "hsl(var(--md-sys-color-on-surface-variant))",
-                marginBottom: "24px",
-                lineHeight: "1.5",
-                textAlign: "center",
-              }}
-            >
-              This is a bare-bones Material Design 3 application perfect for
-              prototyping. All components use the official Material Web
-              Components library.
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "12px",
-                justifyContent: "center",
-              }}
-            >
-              <md-filled-button>Get Started</md-filled-button>
-              <md-outlined-button>Learn More</md-outlined-button>
-              <md-text-button>Documentation</md-text-button>
-            </div>
-          </div>
-        </md-elevated-card>
-
-        {/* Feature Cards Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "16px",
-          }}
-        >
-          <md-elevated-card style={{ width: "100%" }}>
-            <div style={{ padding: "24px", textAlign: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "16px",
-                }}
-              >
-                <md-icon
-                  style={{
-                    fontSize: "48px",
-                    color: "hsl(var(--md-sys-color-primary))",
-                  }}
-                >
-                  palette
-                </md-icon>
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface))",
-                  marginBottom: "8px",
-                  lineHeight: "1.33",
-                }}
-              >
-                Material Theme
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))",
-                  lineHeight: "1.43",
-                }}
-              >
-                Built with Material Design 3 color tokens and theming
-              </p>
-            </div>
-          </md-elevated-card>
-
-          <md-elevated-card style={{ width: "100%" }}>
-            <div style={{ padding: "24px", textAlign: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "16px",
-                }}
-              >
-                <md-icon
-                  style={{
-                    fontSize: "48px",
-                    color: "hsl(var(--md-sys-color-primary))",
-                  }}
-                >
-                  code
-                </md-icon>
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface))",
-                  marginBottom: "8px",
-                  lineHeight: "1.33",
-                }}
-              >
-                Web Components
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))",
-                  lineHeight: "1.43",
-                }}
-              >
-                Official Material Web Components from Google
-              </p>
-            </div>
-          </md-elevated-card>
-
-          <md-elevated-card style={{ width: "100%" }}>
-            <div style={{ padding: "24px", textAlign: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "16px",
-                }}
-              >
-                <md-icon
-                  style={{
-                    fontSize: "48px",
-                    color: "hsl(var(--md-sys-color-primary))",
-                  }}
-                >
-                  speed
-                </md-icon>
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface))",
-                  marginBottom: "8px",
-                  lineHeight: "1.33",
-                }}
-              >
-                Minimal Setup
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))",
-                  lineHeight: "1.43",
-                }}
-              >
-                Bare bones starter ready for your prototypes
-              </p>
-            </div>
-          </md-elevated-card>
-        </div>
-
-        {/* Footer */}
-        <div style={{ textAlign: "center", marginTop: "48px" }}>
-          <p
-            style={{
-              fontSize: "14px",
-              color: "hsl(var(--md-sys-color-on-surface-variant))",
-              lineHeight: "1.43",
-            }}
-          >
-            Start building your next prototype with Material Design 3
-          </p>
-        </div>
+        {/* Main calendar view */}
+        {calendar.currentView === "month" ? (
+          <MonthView
+            currentDate={calendar.selectedDate}
+            events={calendar.visibleEvents}
+            calendars={calendar.calendars}
+            selectedDate={calendar.selectedDate}
+            onDateSelect={calendar.setSelectedDate}
+            onEventClick={handleEventClick}
+          />
+        ) : (
+          <YearView
+            currentDate={calendar.selectedDate}
+            events={calendar.visibleEvents}
+            selectedDate={calendar.selectedDate}
+            onDateSelect={calendar.setSelectedDate}
+          />
+        )}
       </div>
+
+      {/* Event dialog */}
+      <EventDialog
+        open={dialogOpen}
+        event={editingEvent}
+        calendars={calendar.calendars}
+        defaultDate={calendar.selectedDate}
+        onClose={() => {
+          setDialogOpen(false);
+          setEditingEvent(null);
+        }}
+        onSave={handleSaveEvent}
+        onDelete={handleDeleteEvent}
+      />
     </div>
   );
 }
