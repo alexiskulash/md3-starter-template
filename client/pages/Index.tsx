@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
 import "@material/web/icon/icon.js";
@@ -30,10 +30,35 @@ export default function Index() {
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  
+
   // Dialog states
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+
+  // Theme state - initialize from localStorage or system preference
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved) {
+      return saved === "dark";
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  // Apply theme to document
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDarkMode) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  // Theme toggle handler
+  const handleThemeToggle = () => {
+    setIsDarkMode(prev => !prev);
+  };
 
   // Toggle calendar visibility
   const handleToggleCalendar = (calendarId: string) => {
@@ -117,11 +142,13 @@ export default function Index() {
       <CalendarHeader
         viewMode={viewMode}
         currentDate={currentDate}
+        isDarkMode={isDarkMode}
         onViewModeChange={setViewMode}
         onPrevious={handlePrevious}
         onNext={handleNext}
         onToday={handleToday}
         onCreate={() => setIsCreateDialogOpen(true)}
+        onThemeToggle={handleThemeToggle}
       />
 
       {/* Main Content */}

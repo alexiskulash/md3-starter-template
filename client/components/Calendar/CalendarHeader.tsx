@@ -18,21 +18,25 @@ declare global {
 interface CalendarHeaderProps {
   viewMode: ViewMode;
   currentDate: Date;
+  isDarkMode: boolean;
   onViewModeChange: (mode: ViewMode) => void;
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
   onCreate: () => void;
+  onThemeToggle: () => void;
 }
 
 export default function CalendarHeader({
   viewMode,
   currentDate,
+  isDarkMode,
   onViewModeChange,
   onPrevious,
   onNext,
   onToday,
   onCreate,
+  onThemeToggle,
 }: CalendarHeaderProps) {
   const formatTitle = () => {
     if (viewMode === "month") {
@@ -108,46 +112,54 @@ export default function CalendarHeader({
           </h2>
         </div>
 
-        {/* Right Section - View Toggle */}
-        <div
-          style={{
-            display: "flex",
-            gap: "8px",
-            background: "hsl(var(--md-sys-color-surface-container-highest))",
-            borderRadius: "20px",
-            padding: "4px",
-          }}
-        >
-          <md-outlined-button
-            onClick={() => onViewModeChange("month")}
+        {/* Right Section - View Toggle & Theme Toggle */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          {/* View Toggle */}
+          <div
             style={{
-              background:
-                viewMode === "month"
-                  ? "hsl(var(--md-sys-color-secondary-container))"
-                  : "transparent",
-              color:
-                viewMode === "month"
-                  ? "hsl(var(--md-sys-color-on-secondary-container))"
-                  : "hsl(var(--md-sys-color-on-surface))",
+              display: "flex",
+              gap: "8px",
+              background: "hsl(var(--md-sys-color-surface-container-highest))",
+              borderRadius: "20px",
+              padding: "4px",
             }}
           >
-            Month
-          </md-outlined-button>
-          <md-outlined-button
-            onClick={() => onViewModeChange("year")}
-            style={{
-              background:
-                viewMode === "year"
-                  ? "hsl(var(--md-sys-color-secondary-container))"
-                  : "transparent",
-              color:
-                viewMode === "year"
-                  ? "hsl(var(--md-sys-color-on-secondary-container))"
-                  : "hsl(var(--md-sys-color-on-surface))",
-            }}
-          >
-            Year
-          </md-outlined-button>
+            <md-outlined-button
+              onClick={() => onViewModeChange("month")}
+              style={{
+                background:
+                  viewMode === "month"
+                    ? "hsl(var(--md-sys-color-secondary-container))"
+                    : "transparent",
+                color:
+                  viewMode === "month"
+                    ? "hsl(var(--md-sys-color-on-secondary-container))"
+                    : "hsl(var(--md-sys-color-on-surface))",
+              }}
+            >
+              Month
+            </md-outlined-button>
+            <md-outlined-button
+              onClick={() => onViewModeChange("year")}
+              style={{
+                background:
+                  viewMode === "year"
+                    ? "hsl(var(--md-sys-color-secondary-container))"
+                    : "transparent",
+                color:
+                  viewMode === "year"
+                    ? "hsl(var(--md-sys-color-on-secondary-container))"
+                    : "hsl(var(--md-sys-color-on-surface))",
+              }}
+            >
+              Year
+            </md-outlined-button>
+          </div>
+
+          {/* Theme Toggle */}
+          <md-icon-button onClick={onThemeToggle} title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}>
+            <md-icon>{isDarkMode ? "light_mode" : "dark_mode"}</md-icon>
+          </md-icon-button>
         </div>
       </div>
 
