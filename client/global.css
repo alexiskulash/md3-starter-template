@@ -145,3 +145,93 @@ md-filled-text-field {
     var(--md-sys-color-on-surface-variant)
   );
 }
+
+/* Calendar header on primary background */
+header md-outlined-button {
+  --md-outlined-button-outline-color: hsl(var(--md-sys-color-on-primary) / 0.5);
+  --md-outlined-button-label-text-color: hsl(var(--md-sys-color-on-primary));
+  --md-outlined-button-hover-state-layer-color: hsl(var(--md-sys-color-on-primary));
+}
+
+header md-icon-button {
+  --md-icon-button-icon-color: hsl(var(--md-sys-color-on-primary));
+  --md-icon-button-state-layer-color: hsl(var(--md-sys-color-on-primary));
+}
+
+header md-filled-button {
+  --md-filled-button-container-color: hsl(var(--md-sys-color-secondary));
+  --md-filled-button-label-text-color: hsl(var(--md-sys-color-on-secondary));
+}
+
+/* Calendar responsive styles */
+@media (max-width: 768px) {
+  .sidebar-container {
+    display: none;
+  }
+}
+
+/* Task-specific styling */
+.calendar-task-chip {
+  position: relative;
+  overflow: visible;
+}
+
+.calendar-task-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Task completed state styling */
+.task-completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+/* Task list item hover effect */
+md-list-item:hover {
+  background: hsl(var(--md-sys-color-surface-variant) / 0.5);
+}
+
+/* Task sidebar scrollbar styling */
+.task-sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.task-sidebar-scroll::-webkit-scrollbar-track {
+  background: hsl(var(--md-sys-color-surface));
+}
+
+.task-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--md-sys-color-outline-variant));
+  border-radius: 4px;
+}
+
+.task-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--md-sys-color-outline));
+}
+
+/* Task checkbox customization */
+md-checkbox {
+  --md-checkbox-selected-container-color: hsl(var(--md-sys-color-primary));
+  --md-checkbox-selected-icon-color: hsl(var(--md-sys-color-on-primary));
+}
+
+/* Task badge styling */
+.task-count-badge {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
