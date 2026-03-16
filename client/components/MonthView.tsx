@@ -182,6 +182,8 @@ export function MonthView({
                       flexDirection: "column",
                       gap: "4px",
                       transition: "background 0.2s",
+                      minWidth: 0,
+                      overflow: "hidden",
                     }}
                   >
                     {/* Date number */}
@@ -223,6 +225,8 @@ export function MonthView({
                         display: "flex",
                         flexDirection: "column",
                         gap: "2px",
+                        minWidth: 0,
+                        width: "100%",
                       }}
                     >
                       {visibleEvents.map((event) => {
@@ -247,6 +251,8 @@ export function MonthView({
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
                               transition: "opacity 0.2s",
+                              width: "100%",
+                              minWidth: 0,
                             }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.opacity = "0.8";
