@@ -49,6 +49,13 @@
     --md-sys-color-outline: 258 10% 50%;
     --md-sys-color-outline-variant: 258 10% 80%;
 
+    /* Surface containers */
+    --md-sys-color-surface-container-lowest: 0 0% 100%;
+    --md-sys-color-surface-container-low: 258 10% 96%;
+    --md-sys-color-surface-container: 258 10% 94%;
+    --md-sys-color-surface-container-high: 258 10% 92%;
+    --md-sys-color-surface-container-highest: 258 10% 90%;
+
     /* Shape tokens */
     --md-sys-shape-corner-none: 0px;
     --md-sys-shape-corner-extra-small: 4px;
@@ -91,6 +98,12 @@
 
     --md-sys-color-outline: 220 5% 60%;
     --md-sys-color-outline-variant: 220 10% 30%;
+
+    --md-sys-color-surface-container-lowest: 220 15% 8%;
+    --md-sys-color-surface-container-low: 220 15% 12%;
+    --md-sys-color-surface-container: 220 15% 14%;
+    --md-sys-color-surface-container-high: 220 15% 16%;
+    --md-sys-color-surface-container-highest: 220 15% 20%;
   }
 }
 
