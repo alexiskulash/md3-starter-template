@@ -9,9 +9,11 @@ import CalendarSidebar from "../components/Calendar/CalendarSidebar";
 import MonthView from "../components/Calendar/MonthView";
 import YearView from "../components/Calendar/YearView";
 import EventDialog from "../components/Calendar/EventDialog";
+import TimeBlockDialog from "../components/Calendar/TimeBlockDialog";
 
-import { Calendar, CalendarEvent, ViewMode } from "../types/calendar";
+import { Calendar, CalendarEvent, ViewMode, TimeBlock } from "../types/calendar";
 import { defaultCalendars, sampleEvents } from "../data/sampleData";
+import { getWeatherForecast, WeatherData } from "../utils/weatherService";
 
 declare global {
   namespace JSX {
@@ -27,6 +29,8 @@ declare global {
 export default function Index() {
   const [calendars, setCalendars] = useState<Calendar[]>(defaultCalendars);
   const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
+  const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
+  const [weather, setWeather] = useState<WeatherData[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -34,6 +38,7 @@ export default function Index() {
   // Dialog states
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [isTimeBlockDialogOpen, setIsTimeBlockDialogOpen] = useState(false);
 
   // Theme state - initialize from localStorage or system preference
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
@@ -59,6 +64,18 @@ export default function Index() {
   const handleThemeToggle = () => {
     setIsDarkMode(prev => !prev);
   };
+
+  // Fetch weather data
+  useEffect(() => {
+    const fetchWeather = async () => {
+      // Get weather for the current month (30 days from start of month)
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const weatherData = await getWeatherForecast(startOfMonth, 30);
+      setWeather(weatherData);
+    };
+
+    fetchWeather();
+  }, [currentDate]);
 
   // Toggle calendar visibility
   const handleToggleCalendar = (calendarId: string) => {
@@ -137,6 +154,90 @@ export default function Index() {
     setSelectedDate(date);
   };
 
+  // Time block handlers
+  const handleCreateTimeBlock = (timeBlock: {
+    title: string;
+    category: 'work' | 'personal' | 'break' | 'focus' | 'meeting' | 'other';
+    startTime: string;
+    endTime: string;
+    recurring: boolean;
+    daysOfWeek: number[];
+  }) => {
+    const CATEGORY_COLORS: Record<string, string> = {
+      work: '#1976d2',
+      personal: '#388e3c',
+      break: '#f57c00',
+      focus: '#7b1fa2',
+      meeting: '#c62828',
+      other: '#616161',
+    };
+
+    const newTimeBlock: TimeBlock = {
+      id: Date.now().toString(),
+      title: timeBlock.title,
+      category: timeBlock.category,
+      startTime: timeBlock.startTime,
+      endTime: timeBlock.endTime,
+      color: CATEGORY_COLORS[timeBlock.category],
+      recurring: timeBlock.recurring ? {
+        frequency: 'weekly',
+        daysOfWeek: timeBlock.daysOfWeek,
+      } : undefined,
+    };
+
+    setTimeBlocks(prev => [...prev, newTimeBlock]);
+
+    // Apply time block to calendar events
+    applyTimeBlockToEvents(newTimeBlock);
+
+    setIsTimeBlockDialogOpen(false);
+  };
+
+  const applyTimeBlockToEvents = (timeBlock: TimeBlock) => {
+    const today = new Date();
+    const newEvents: CalendarEvent[] = [];
+
+    // If recurring, create events for next 4 weeks
+    if (timeBlock.recurring) {
+      for (let week = 0; week < 4; week++) {
+        timeBlock.recurring.daysOfWeek?.forEach(dayOfWeek => {
+          const eventDate = new Date(today);
+          eventDate.setDate(today.getDate() + (dayOfWeek - today.getDay()) + (week * 7));
+
+          // Skip past dates
+          if (eventDate < today) return;
+
+          newEvents.push({
+            id: `tb-${timeBlock.id}-${eventDate.toISOString()}`,
+            title: timeBlock.title,
+            startDate: eventDate.toISOString().split('T')[0],
+            startTime: timeBlock.startTime,
+            endDate: eventDate.toISOString().split('T')[0],
+            endTime: timeBlock.endTime,
+            calendarId: timeBlock.category === 'work' ? 'work' : 'personal',
+            isTimeBlock: true,
+            timeBlockCategory: timeBlock.category,
+          });
+        });
+      }
+    } else {
+      // Create single event for today
+      newEvents.push({
+        id: `tb-${timeBlock.id}-${today.toISOString()}`,
+        title: timeBlock.title,
+        startDate: today.toISOString().split('T')[0],
+        startTime: timeBlock.startTime,
+        endDate: today.toISOString().split('T')[0],
+        endTime: timeBlock.endTime,
+        calendarId: timeBlock.category === 'work' ? 'work' : 'personal',
+        isTimeBlock: true,
+        timeBlockCategory: timeBlock.category,
+      });
+    }
+
+    setEvents(prev => [...prev, ...newEvents]);
+  };
+
   return (
     <div
       style={{
@@ -157,6 +258,7 @@ export default function Index() {
         onNext={handleNext}
         onToday={handleToday}
         onCreate={() => setIsCreateDialogOpen(true)}
+        onCreateTimeBlock={() => setIsTimeBlockDialogOpen(true)}
         onQuickAdd={handleQuickAdd}
         onThemeToggle={handleThemeToggle}
       />
@@ -180,6 +282,7 @@ export default function Index() {
               selectedDate={selectedDate}
               events={visibleEvents}
               calendars={calendars}
+              weather={weather}
               onDateSelect={handleDateSelect}
               onEventClick={handleEventClick}
             />
@@ -213,6 +316,14 @@ export default function Index() {
           onSave={handleUpdateEvent}
           onDelete={handleDeleteEvent}
           onClose={() => setEditingEvent(null)}
+        />
+      )}
+
+      {/* Time Block Dialog */}
+      {isTimeBlockDialogOpen && (
+        <TimeBlockDialog
+          onSave={handleCreateTimeBlock}
+          onClose={() => setIsTimeBlockDialogOpen(false)}
         />
       )}
     </div>

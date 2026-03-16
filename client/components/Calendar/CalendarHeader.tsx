@@ -26,6 +26,7 @@ interface CalendarHeaderProps {
   onNext: () => void;
   onToday: () => void;
   onCreate: () => void;
+  onCreateTimeBlock: () => void;
   onQuickAdd: (event: {
     title: string;
     startDate: string;
@@ -47,6 +48,7 @@ export default function CalendarHeader({
   onNext,
   onToday,
   onCreate,
+  onCreateTimeBlock,
   onQuickAdd,
   onThemeToggle,
 }: CalendarHeaderProps) {
@@ -64,7 +66,7 @@ export default function CalendarHeader({
   return (
     <header
       style={{
-        background: "hsl(var(--md-sys-color-tertiary-container))",
+        background: "#221640",
         borderBottom: "1px solid hsl(var(--md-sys-color-outline-variant))",
         padding: "16px 24px",
       }}
@@ -85,7 +87,7 @@ export default function CalendarHeader({
             style={{
               fontSize: "24px",
               fontWeight: "500",
-              color: "hsl(var(--md-sys-color-on-tertiary-container))",
+              color: "#ffffff",
               margin: 0,
             }}
           >
@@ -96,6 +98,11 @@ export default function CalendarHeader({
             <md-icon slot="icon">add</md-icon>
             Create
           </md-filled-button>
+
+          <md-outlined-button onClick={onCreateTimeBlock}>
+            <md-icon slot="icon">schedule</md-icon>
+            Time Block
+          </md-outlined-button>
 
           <QuickAddInput calendars={calendars} onQuickAdd={onQuickAdd} />
         </div>
@@ -116,7 +123,7 @@ export default function CalendarHeader({
             style={{
               fontSize: "18px",
               fontWeight: "500",
-              color: "hsl(var(--md-sys-color-on-tertiary-container))",
+              color: "#ffffff",
               margin: 0,
               minWidth: "200px",
               textAlign: "center",
@@ -148,7 +155,7 @@ export default function CalendarHeader({
                 color:
                   viewMode === "month"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-tertiary-container))",
+                    : "#ffffff",
               }}
             >
               Month
@@ -163,7 +170,7 @@ export default function CalendarHeader({
                 color:
                   viewMode === "year"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-tertiary-container))",
+                    : "#ffffff",
               }}
             >
               Year

@@ -1,10 +1,13 @@
 import { Calendar, CalendarEvent } from "../../types/calendar";
+import { WeatherData } from "../../utils/weatherService";
+import WeatherIndicator from "./WeatherIndicator";
 
 interface MonthViewProps {
   currentDate: Date;
   selectedDate: Date;
   events: CalendarEvent[];
   calendars: Calendar[];
+  weather?: WeatherData[];
   onDateSelect: (date: Date) => void;
   onEventClick: (event: CalendarEvent) => void;
 }
@@ -14,6 +17,7 @@ export default function MonthView({
   selectedDate,
   events,
   calendars,
+  weather,
   onDateSelect,
   onEventClick,
 }: MonthViewProps) {
@@ -43,6 +47,12 @@ export default function MonthView({
   const getCalendarColor = (calendarId: string) => {
     const calendar = calendars.find((c) => c.id === calendarId);
     return calendar?.color || "hsl(var(--md-sys-color-primary))";
+  };
+
+  const getWeatherForDate = (date: Date) => {
+    if (!weather) return null;
+    const dateStr = date.toISOString().split("T")[0];
+    return weather.find((w) => w.date === dateStr) || null;
   };
 
   const renderWeekDays = () => {
@@ -104,6 +114,7 @@ export default function MonthView({
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
       const dayEvents = getEventsForDate(date);
+      const dayWeather = getWeatherForDate(date);
       const isSelected =
         selectedDate.getDate() === day &&
         selectedDate.getMonth() === currentDate.getMonth() &&
@@ -172,6 +183,7 @@ export default function MonthView({
             >
               {day}
             </div>
+            {dayWeather && <WeatherIndicator weather={dayWeather} compact />}
           </div>
 
           {/* Events */}
