@@ -6,6 +6,7 @@ import MonthView from "../components/MonthView";
 import YearView from "../components/YearView";
 import AgendaView from "../components/AgendaView";
 import EventDialog from "../components/EventDialog";
+import QuickAddEvent from "../components/QuickAddEvent";
 import { useCalendar } from "../contexts/CalendarContext";
 import { getMonthYear } from "../utils/dateUtils";
 import type { CalendarEvent } from "../types/calendar";
@@ -139,6 +140,11 @@ function CalendarContent() {
             <md-icon slot="icon">add</md-icon>
             Create
           </md-filled-button>
+
+          {/* Quick Add - Hidden on small screens */}
+          <div className="hidden xl:block">
+            <QuickAddEvent onOpenFullDialog={handleCreateEvent} />
+          </div>
 
           {/* Spacer */}
           <div className="flex-1" />
