@@ -50,8 +50,8 @@ export function MonthView() {
     const isCurrentMonth = date.getMonth() === month;
     const isSelected = isSameDay(date, state.selectedDate);
     const isTodayDate = isToday(date);
-    
-    const events = getEventsForDate(date, state.events, getEnabledCalendars());
+
+    const events = getEventsForDate(state.events, date, getEnabledCalendars());
     const sortedEvents = sortEventsByTime(events);
     const visibleEvents = sortedEvents.slice(0, 3);
     const hasMore = sortedEvents.length > 3;

@@ -89,7 +89,7 @@ export function YearView() {
             const isCurrentMonth = date.getMonth() === monthIndex;
             const isSelected = isSameDay(date, state.selectedDate);
             const isTodayDate = isToday(date);
-            const hasEventsOnDate = hasEvents(date, state.events, getEnabledCalendars());
+            const hasEventsOnDate = hasEvents(state.events, date, getEnabledCalendars());
 
             return (
               <div
