@@ -41,8 +41,8 @@ export function CalendarHeader({
     <header
       style={{
         padding: "16px 24px",
-        borderBottom: "1px solid hsl(var(--md-sys-color-outline-variant))",
-        background: "hsl(var(--md-sys-color-surface))",
+        borderBottom: "1px solid hsl(var(--md-sys-color-primary))",
+        background: "hsl(var(--md-sys-color-primary))",
       }}
     >
       <div
@@ -60,7 +60,7 @@ export function CalendarHeader({
             style={{
               fontSize: "22px",
               fontWeight: "500",
-              color: "hsl(var(--md-sys-color-on-surface))",
+              color: "hsl(var(--md-sys-color-on-primary))",
               margin: 0,
             }}
           >
@@ -82,7 +82,7 @@ export function CalendarHeader({
               style={{
                 fontSize: "16px",
                 fontWeight: "500",
-                color: "hsl(var(--md-sys-color-on-surface))",
+                color: "hsl(var(--md-sys-color-on-primary))",
                 margin: "0 8px",
                 minWidth: "150px",
               }}
@@ -99,7 +99,7 @@ export function CalendarHeader({
             style={{
               display: "flex",
               gap: "0",
-              border: "1px solid hsl(var(--md-sys-color-outline))",
+              border: "1px solid hsl(var(--md-sys-color-on-primary) / 0.3)",
               borderRadius: "20px",
               overflow: "hidden",
             }}
@@ -116,7 +116,7 @@ export function CalendarHeader({
                 color:
                   currentView === "month"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-surface))",
+                    : "hsl(var(--md-sys-color-on-primary))",
                 cursor: "pointer",
                 fontSize: "14px",
                 fontWeight: "500",
@@ -130,7 +130,7 @@ export function CalendarHeader({
               style={{
                 padding: "8px 16px",
                 border: "none",
-                borderLeft: "1px solid hsl(var(--md-sys-color-outline))",
+                borderLeft: "1px solid hsl(var(--md-sys-color-on-primary) / 0.3)",
                 background:
                   currentView === "year"
                     ? "hsl(var(--md-sys-color-secondary-container))"
@@ -138,7 +138,7 @@ export function CalendarHeader({
                 color:
                   currentView === "year"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-surface))",
+                    : "hsl(var(--md-sys-color-on-primary))",
                 cursor: "pointer",
                 fontSize: "14px",
                 fontWeight: "500",
@@ -152,7 +152,7 @@ export function CalendarHeader({
               style={{
                 padding: "8px 16px",
                 border: "none",
-                borderLeft: "1px solid hsl(var(--md-sys-color-outline))",
+                borderLeft: "1px solid hsl(var(--md-sys-color-on-primary) / 0.3)",
                 background:
                   currentView === "agenda"
                     ? "hsl(var(--md-sys-color-secondary-container))"
@@ -160,7 +160,7 @@ export function CalendarHeader({
                 color:
                   currentView === "agenda"
                     ? "hsl(var(--md-sys-color-on-secondary-container))"
-                    : "hsl(var(--md-sys-color-on-surface))",
+                    : "hsl(var(--md-sys-color-on-primary))",
                 cursor: "pointer",
                 fontSize: "14px",
                 fontWeight: "500",
