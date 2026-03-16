@@ -1,8 +1,9 @@
-import { ViewMode } from "../../types/calendar";
+import { ViewMode, Calendar } from "../../types/calendar";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/icon/icon.js";
+import QuickAddInput from "./QuickAddInput";
 
 declare global {
   namespace JSX {
@@ -19,11 +20,20 @@ interface CalendarHeaderProps {
   viewMode: ViewMode;
   currentDate: Date;
   isDarkMode: boolean;
+  calendars: Calendar[];
   onViewModeChange: (mode: ViewMode) => void;
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
   onCreate: () => void;
+  onQuickAdd: (event: {
+    title: string;
+    startDate: string;
+    startTime: string;
+    endDate: string;
+    endTime: string;
+    calendarId: string;
+  }) => void;
   onThemeToggle: () => void;
 }
 
@@ -31,11 +41,13 @@ export default function CalendarHeader({
   viewMode,
   currentDate,
   isDarkMode,
+  calendars,
   onViewModeChange,
   onPrevious,
   onNext,
   onToday,
   onCreate,
+  onQuickAdd,
   onThemeToggle,
 }: CalendarHeaderProps) {
   const formatTitle = () => {
@@ -68,7 +80,7 @@ export default function CalendarHeader({
         }}
       >
         {/* Left Section */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", flex: 1 }}>
           <h1
             style={{
               fontSize: "24px",
@@ -84,6 +96,8 @@ export default function CalendarHeader({
             <md-icon slot="icon">add</md-icon>
             Create
           </md-filled-button>
+
+          <QuickAddInput calendars={calendars} onQuickAdd={onQuickAdd} />
         </div>
 
         {/* Center Section - Navigation */}

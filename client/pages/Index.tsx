@@ -111,6 +111,14 @@ export default function Index() {
     setIsCreateDialogOpen(false);
   };
 
+  const handleQuickAdd = (event: Omit<CalendarEvent, "id" | "description">) => {
+    const newEvent: CalendarEvent = {
+      ...event,
+      id: Date.now().toString(),
+    };
+    setEvents(prev => [...prev, newEvent]);
+  };
+
   const handleUpdateEvent = (event: CalendarEvent) => {
     setEvents(prev => prev.map(e => (e.id === event.id ? event : e)));
     setEditingEvent(null);
@@ -143,11 +151,13 @@ export default function Index() {
         viewMode={viewMode}
         currentDate={currentDate}
         isDarkMode={isDarkMode}
+        calendars={calendars}
         onViewModeChange={setViewMode}
         onPrevious={handlePrevious}
         onNext={handleNext}
         onToday={handleToday}
         onCreate={() => setIsCreateDialogOpen(true)}
+        onQuickAdd={handleQuickAdd}
         onThemeToggle={handleThemeToggle}
       />
 
