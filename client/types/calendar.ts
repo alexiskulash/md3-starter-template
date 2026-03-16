@@ -18,6 +18,18 @@ export interface CalendarEvent {
   calendarId: string;
 }
 
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  dueDate?: string; // ISO date string (YYYY-MM-DD) - optional deadline
+  estimatedDuration?: number; // Duration in minutes
+  completed: boolean;
+  calendarId: string; // Which calendar/project it belongs to
+  scheduledDate?: string; // ISO date string when time-blocked on calendar
+  scheduledStartTime?: string; // HH:MM format (24-hour)
+}
+
 export type ViewType = "month" | "year" | "agenda";
 
 export interface CalendarState {

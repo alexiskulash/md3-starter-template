@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import type { Calendar, CalendarEvent, ViewType } from "../types/calendar";
+import type { Calendar, CalendarEvent, Task, ViewType } from "../types/calendar";
 
 export function useCalendar() {
   const [calendars, setCalendars] = useState<Calendar[]>([
@@ -24,6 +24,7 @@ export function useCalendar() {
   ]);
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<ViewType>("month");
 
@@ -35,6 +36,24 @@ export function useCalendar() {
     return events.filter((event) => enabledCalendarIds.has(event.calendarId));
   }, [events, calendars]);
 
+  // Get visible tasks (only from enabled calendars)
+  const visibleTasks = useMemo(() => {
+    const enabledCalendarIds = new Set(
+      calendars.filter((c) => c.enabled).map((c) => c.id)
+    );
+    return tasks.filter((task) => enabledCalendarIds.has(task.calendarId));
+  }, [tasks, calendars]);
+
+  // Get unscheduled tasks
+  const unscheduledTasks = useMemo(() => {
+    return visibleTasks.filter((task) => !task.scheduledDate && !task.completed);
+  }, [visibleTasks]);
+
+  // Get completed tasks
+  const completedTasks = useMemo(() => {
+    return visibleTasks.filter((task) => task.completed);
+  }, [visibleTasks]);
+
   // Get events for a specific date
   const getEventsForDate = useCallback(
     (date: Date) => {
@@ -44,6 +63,15 @@ export function useCalendar() {
       });
     },
     [visibleEvents]
+  );
+
+  // Get tasks for a specific date (scheduled tasks only)
+  const getTasksForDate = useCallback(
+    (date: Date) => {
+      const dateStr = date.toISOString().split("T")[0];
+      return visibleTasks.filter((task) => task.scheduledDate === dateStr);
+    },
+    [visibleTasks]
   );
 
   // Toggle calendar visibility
@@ -77,6 +105,62 @@ export function useCalendar() {
   // Delete event
   const deleteEvent = useCallback((eventId: string) => {
     setEvents((prev) => prev.filter((event) => event.id !== eventId));
+  }, []);
+
+  // Create new task
+  const createTask = useCallback((task: Omit<Task, "id">) => {
+    const newTask: Task = {
+      ...task,
+      id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    };
+    setTasks((prev) => [...prev, newTask]);
+    return newTask;
+  }, []);
+
+  // Update existing task
+  const updateTask = useCallback((taskId: string, updates: Partial<Task>) => {
+    setTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
+    );
+  }, []);
+
+  // Delete task
+  const deleteTask = useCallback((taskId: string) => {
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
+  }, []);
+
+  // Toggle task completion
+  const toggleTaskComplete = useCallback((taskId: string) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  }, []);
+
+  // Schedule a task to a specific date/time (time blocking)
+  const scheduleTask = useCallback(
+    (taskId: string, date: string, startTime?: string) => {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === taskId
+            ? { ...task, scheduledDate: date, scheduledStartTime: startTime }
+            : task
+        )
+      );
+    },
+    []
+  );
+
+  // Unschedule a task (remove from calendar, back to task list)
+  const unscheduleTask = useCallback((taskId: string) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? { ...task, scheduledDate: undefined, scheduledStartTime: undefined }
+          : task
+      )
+    );
   }, []);
 
   // Navigation helpers
@@ -120,15 +204,26 @@ export function useCalendar() {
     calendars,
     events,
     visibleEvents,
+    tasks,
+    visibleTasks,
+    unscheduledTasks,
+    completedTasks,
     selectedDate,
     currentView,
     setSelectedDate,
     setCurrentView,
     getEventsForDate,
+    getTasksForDate,
     toggleCalendar,
     createEvent,
     updateEvent,
     deleteEvent,
+    createTask,
+    updateTask,
+    deleteTask,
+    toggleTaskComplete,
+    scheduleTask,
+    unscheduleTask,
     goToToday,
     goToPreviousMonth,
     goToNextMonth,

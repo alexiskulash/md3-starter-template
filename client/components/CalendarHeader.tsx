@@ -7,24 +7,30 @@ interface CalendarHeaderProps {
   currentDate: Date;
   currentView: "month" | "year" | "agenda";
   theme: "light" | "dark";
+  showTaskSidebar: boolean;
+  unscheduledTaskCount: number;
   onViewChange: (view: "month" | "year" | "agenda") => void;
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
   onCreateEvent: () => void;
   onThemeToggle: () => void;
+  onToggleTaskSidebar: () => void;
 }
 
 export function CalendarHeader({
   currentDate,
   currentView,
   theme,
+  showTaskSidebar,
+  unscheduledTaskCount,
   onViewChange,
   onPrevious,
   onNext,
   onToday,
   onCreateEvent,
   onThemeToggle,
+  onToggleTaskSidebar,
 }: CalendarHeaderProps) {
   const formatTitle = () => {
     if (currentView === "month") {
@@ -169,6 +175,42 @@ export function CalendarHeader({
             >
               Agenda
             </button>
+          </div>
+
+          <div style={{ position: "relative" }}>
+            <md-icon-button
+              onClick={onToggleTaskSidebar}
+              title="Toggle task sidebar"
+              style={{
+                background: showTaskSidebar
+                  ? "hsl(var(--md-sys-color-secondary-container))"
+                  : "transparent",
+              } as any}
+            >
+              <md-icon>task_alt</md-icon>
+            </md-icon-button>
+            {unscheduledTaskCount > 0 && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "4px",
+                  right: "4px",
+                  background: "hsl(var(--md-sys-color-error))",
+                  color: "hsl(var(--md-sys-color-on-error))",
+                  borderRadius: "50%",
+                  width: "18px",
+                  height: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "10px",
+                  fontWeight: "700",
+                  pointerEvents: "none",
+                }}
+              >
+                {unscheduledTaskCount > 9 ? "9+" : unscheduledTaskCount}
+              </div>
+            )}
           </div>
 
           <md-icon-button onClick={onThemeToggle} title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}>

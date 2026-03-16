@@ -1,22 +1,26 @@
 import { useMemo } from "react";
-import type { CalendarEvent, Calendar } from "../types/calendar";
+import type { CalendarEvent, Calendar, Task } from "../types/calendar";
 
 interface MonthViewProps {
   currentDate: Date;
   events: CalendarEvent[];
+  tasks: Task[];
   calendars: Calendar[];
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
   onEventClick: (event: CalendarEvent) => void;
+  onTaskClick: (task: Task) => void;
 }
 
 export function MonthView({
   currentDate,
   events,
+  tasks,
   calendars,
   selectedDate,
   onDateSelect,
   onEventClick,
+  onTaskClick,
 }: MonthViewProps) {
   const calendarMap = useMemo(() => {
     return new Map(calendars.map((cal) => [cal.id, cal]));
@@ -65,6 +69,11 @@ export function MonthView({
     return events.filter((event) => {
       return dateStr >= event.startDate && dateStr <= event.endDate;
     });
+  };
+
+  const getTasksForDate = (date: Date) => {
+    const dateStr = date.toISOString().split("T")[0];
+    return tasks.filter((task) => task.scheduledDate === dateStr);
   };
 
   const isToday = (date: Date) => {
@@ -162,8 +171,11 @@ export function MonthView({
             >
               {week.map((date, dayIndex) => {
                 const dayEvents = getEventsForDate(date);
-                const visibleEvents = dayEvents.slice(0, 3);
-                const moreCount = dayEvents.length - 3;
+                const dayTasks = getTasksForDate(date);
+                const allItems = [...dayEvents, ...dayTasks];
+                const visibleEvents = dayEvents.slice(0, 2);
+                const visibleTasks = dayTasks.slice(0, 3 - visibleEvents.length);
+                const moreCount = allItems.length - (visibleEvents.length + visibleTasks.length);
 
                 return (
                   <div
@@ -219,7 +231,7 @@ export function MonthView({
                       )}
                     </div>
 
-                    {/* Events */}
+                    {/* Events and Tasks */}
                     <div
                       style={{
                         display: "flex",
@@ -229,6 +241,7 @@ export function MonthView({
                         width: "100%",
                       }}
                     >
+                      {/* Events */}
                       {visibleEvents.map((event) => {
                         const calendar = calendarMap.get(event.calendarId);
                         return (
@@ -238,6 +251,7 @@ export function MonthView({
                               e.stopPropagation();
                               onEventClick(event);
                             }}
+                            className="calendar-event-chip"
                             style={{
                               background: calendar?.color || "hsl(var(--md-sys-color-primary))",
                               color: "white",
@@ -262,6 +276,54 @@ export function MonthView({
                             }}
                           >
                             {formatTime(event.startTime)} {event.title}
+                          </button>
+                        );
+                      })}
+
+                      {/* Tasks */}
+                      {visibleTasks.map((task) => {
+                        const calendar = calendarMap.get(task.calendarId);
+                        const taskColor = calendar?.color || "hsl(var(--md-sys-color-primary))";
+                        return (
+                          <button
+                            key={task.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onTaskClick(task);
+                            }}
+                            className="calendar-task-chip"
+                            style={{
+                              background: taskColor,
+                              color: "white",
+                              padding: "4px 6px",
+                              borderRadius: "4px",
+                              fontSize: "11px",
+                              border: "2px dashed rgba(255, 255, 255, 0.5)",
+                              textAlign: "left",
+                              cursor: "pointer",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              transition: "opacity 0.2s",
+                              width: "100%",
+                              minWidth: 0,
+                              opacity: 0.85,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.opacity = "0.7";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.opacity = "0.85";
+                            }}
+                          >
+                            <span style={{ fontSize: "10px" }}>☐</span>
+                            <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                              {task.scheduledStartTime ? `${formatTime(task.scheduledStartTime)} ` : ""}
+                              {task.title}
+                            </span>
                           </button>
                         );
                       })}

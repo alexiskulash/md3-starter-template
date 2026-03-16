@@ -3,17 +3,22 @@ import { useCalendar } from "../hooks/useCalendar";
 import { useTheme } from "../hooks/useTheme";
 import { CalendarHeader } from "../components/CalendarHeader";
 import { CalendarSidebar } from "../components/CalendarSidebar";
+import { TaskSidebar } from "../components/TaskSidebar";
 import { MonthView } from "../components/MonthView";
 import { YearView } from "../components/YearView";
 import { AgendaView } from "../components/AgendaView";
 import { EventDialog } from "../components/EventDialog";
-import type { CalendarEvent } from "../types/calendar";
+import { TaskDialog } from "../components/TaskDialog";
+import type { CalendarEvent, Task } from "../types/calendar";
 
 export default function Index() {
   const calendar = useCalendar();
   const { theme, toggleTheme } = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [showTaskSidebar, setShowTaskSidebar] = useState(true);
 
   // Populate with sample events
   useEffect(() => {
@@ -142,6 +147,94 @@ export default function Index() {
 
       sampleEvents.forEach((event) => calendar.createEvent(event));
     }
+
+    // Populate sample tasks
+    if (calendar.tasks.length === 0) {
+      const now = new Date();
+      const today = now.toISOString().split("T")[0];
+
+      // Helper to create date strings
+      const getDateStr = (daysOffset: number) => {
+        const date = new Date(now);
+        date.setDate(date.getDate() + daysOffset);
+        return date.toISOString().split("T")[0];
+      };
+
+      const sampleTasks = [
+        {
+          title: "Review project proposal",
+          description: "Review and provide feedback on the Q2 project proposal document",
+          calendarId: "work",
+          estimatedDuration: 60,
+          completed: false,
+          dueDate: getDateStr(3),
+          // Unscheduled
+        },
+        {
+          title: "Grocery shopping",
+          description: "Buy groceries for the week",
+          calendarId: "personal",
+          estimatedDuration: 45,
+          completed: false,
+          scheduledDate: getDateStr(5), // Saturday
+          scheduledStartTime: "10:00",
+        },
+        {
+          title: "Call dentist",
+          description: "Schedule cleaning appointment",
+          calendarId: "personal",
+          estimatedDuration: 15,
+          completed: false,
+          dueDate: today,
+          // Unscheduled
+        },
+        {
+          title: "Prepare presentation",
+          description: "Create slides for Monday's client meeting",
+          calendarId: "work",
+          estimatedDuration: 120,
+          completed: false,
+          scheduledDate: today,
+          scheduledStartTime: "14:00",
+        },
+        {
+          title: "Update resume",
+          description: "Add recent projects and achievements",
+          calendarId: "work",
+          estimatedDuration: 90,
+          completed: false,
+          dueDate: getDateStr(7),
+          // Unscheduled
+        },
+        {
+          title: "Plan birthday party",
+          description: "Organize activities and guest list for Sarah's birthday",
+          calendarId: "family",
+          estimatedDuration: 60,
+          completed: false,
+          scheduledDate: getDateStr(14),
+          scheduledStartTime: "11:00",
+        },
+        {
+          title: "Read investment report",
+          description: "Review quarterly investment portfolio performance",
+          calendarId: "personal",
+          estimatedDuration: 30,
+          completed: true,
+          scheduledDate: getDateStr(-3),
+          scheduledStartTime: "09:00",
+        },
+        {
+          title: "Order office supplies",
+          description: "Restock printer paper, pens, and notebooks",
+          calendarId: "work",
+          estimatedDuration: 20,
+          completed: true,
+        },
+      ];
+
+      sampleTasks.forEach((task) => calendar.createTask(task));
+    }
   }, []);
 
   const handleCreateEvent = () => {
@@ -168,6 +261,32 @@ export default function Index() {
     calendar.deleteEvent(eventId);
     setDialogOpen(false);
     setEditingEvent(null);
+  };
+
+  const handleCreateTask = () => {
+    setEditingTask(null);
+    setTaskDialogOpen(true);
+  };
+
+  const handleTaskClick = (task: Task) => {
+    setEditingTask(task);
+    setTaskDialogOpen(true);
+  };
+
+  const handleSaveTask = (taskData: Omit<Task, "id">) => {
+    if (editingTask) {
+      calendar.updateTask(editingTask.id, taskData);
+    } else {
+      calendar.createTask(taskData);
+    }
+    setTaskDialogOpen(false);
+    setEditingTask(null);
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    calendar.deleteTask(taskId);
+    setTaskDialogOpen(false);
+    setEditingTask(null);
   };
 
   const handleNavigation = () => {
@@ -198,12 +317,15 @@ export default function Index() {
         currentDate={calendar.selectedDate}
         currentView={calendar.currentView}
         theme={theme}
+        showTaskSidebar={showTaskSidebar}
+        unscheduledTaskCount={calendar.unscheduledTasks.length}
         onViewChange={calendar.setCurrentView}
         onPrevious={handleNavigation().onPrevious}
         onNext={handleNavigation().onNext}
         onToday={calendar.goToToday}
         onCreateEvent={handleCreateEvent}
         onThemeToggle={toggleTheme}
+        onToggleTaskSidebar={() => setShowTaskSidebar(!showTaskSidebar)}
       />
 
       {/* Main content area with sidebar */}
@@ -223,10 +345,12 @@ export default function Index() {
           <MonthView
             currentDate={calendar.selectedDate}
             events={calendar.visibleEvents}
+            tasks={calendar.visibleTasks}
             calendars={calendar.calendars}
             selectedDate={calendar.selectedDate}
             onDateSelect={calendar.setSelectedDate}
             onEventClick={handleEventClick}
+            onTaskClick={handleTaskClick}
           />
         ) : calendar.currentView === "year" ? (
           <YearView
@@ -239,8 +363,23 @@ export default function Index() {
           <AgendaView
             currentDate={calendar.selectedDate}
             events={calendar.visibleEvents}
+            tasks={calendar.visibleTasks}
             calendars={calendar.calendars}
             onEventClick={handleEventClick}
+            onTaskClick={handleTaskClick}
+            onToggleTaskComplete={calendar.toggleTaskComplete}
+          />
+        )}
+
+        {/* Task Sidebar */}
+        {showTaskSidebar && (
+          <TaskSidebar
+            unscheduledTasks={calendar.unscheduledTasks}
+            completedTasks={calendar.completedTasks}
+            calendars={calendar.calendars}
+            onTaskClick={handleTaskClick}
+            onToggleComplete={calendar.toggleTaskComplete}
+            onCreateTask={handleCreateTask}
           />
         )}
       </div>
@@ -257,6 +396,20 @@ export default function Index() {
         }}
         onSave={handleSaveEvent}
         onDelete={handleDeleteEvent}
+      />
+
+      {/* Task dialog */}
+      <TaskDialog
+        open={taskDialogOpen}
+        task={editingTask}
+        calendars={calendar.calendars}
+        defaultDate={calendar.selectedDate}
+        onClose={() => {
+          setTaskDialogOpen(false);
+          setEditingTask(null);
+        }}
+        onSave={handleSaveTask}
+        onDelete={handleDeleteTask}
       />
     </div>
   );
