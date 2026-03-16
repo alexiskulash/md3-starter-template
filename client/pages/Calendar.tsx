@@ -103,7 +103,7 @@ function CalendarContent() {
       <header
         className="border-b px-4 py-3"
         style={{
-          backgroundColor: "hsl(var(--md-sys-color-surface))",
+          backgroundColor: "hsl(var(--md-sys-color-primary))",
           borderColor: "hsl(var(--md-sys-color-outline-variant))",
         }}
       >
@@ -113,21 +113,29 @@ function CalendarContent() {
             <md-icon
               style={{
                 fontSize: "32px",
-                color: "hsl(var(--md-sys-color-primary))",
+                color: "hsl(var(--md-sys-color-on-primary))",
               }}
             >
               calendar_month
             </md-icon>
             <h1
               className="text-2xl font-semibold"
-              style={{ color: "hsl(var(--md-sys-color-on-surface))" }}
+              style={{ color: "hsl(var(--md-sys-color-on-primary))" }}
             >
               Calendar
             </h1>
           </div>
 
           {/* Create Button */}
-          <md-filled-button onClick={handleCreateEvent}>
+          <md-filled-button
+            onClick={handleCreateEvent}
+            style={{
+              "--md-filled-button-container-color":
+                "hsl(var(--md-sys-color-on-primary))",
+              "--md-filled-button-label-text-color":
+                "hsl(var(--md-sys-color-primary))",
+            }}
+          >
             <md-icon slot="icon">add</md-icon>
             Create
           </md-filled-button>
@@ -137,20 +145,38 @@ function CalendarContent() {
 
           {/* Navigation */}
           <div className="flex items-center gap-2">
-            <md-outlined-button onClick={goToToday}>Today</md-outlined-button>
+            <md-outlined-button
+              onClick={goToToday}
+              style={{
+                "--md-outlined-button-outline-color":
+                  "hsl(var(--md-sys-color-on-primary))",
+                "--md-outlined-button-label-text-color":
+                  "hsl(var(--md-sys-color-on-primary))",
+              }}
+            >
+              Today
+            </md-outlined-button>
             {currentView !== "agenda" && (
               <>
                 <md-icon-button onClick={handlePrev}>
-                  <md-icon>chevron_left</md-icon>
+                  <md-icon
+                    style={{ color: "hsl(var(--md-sys-color-on-primary))" }}
+                  >
+                    chevron_left
+                  </md-icon>
                 </md-icon-button>
                 <md-icon-button onClick={handleNext}>
-                  <md-icon>chevron_right</md-icon>
+                  <md-icon
+                    style={{ color: "hsl(var(--md-sys-color-on-primary))" }}
+                  >
+                    chevron_right
+                  </md-icon>
                 </md-icon-button>
               </>
             )}
             <h2
               className="text-lg font-medium min-w-[180px] text-center"
-              style={{ color: "hsl(var(--md-sys-color-on-surface))" }}
+              style={{ color: "hsl(var(--md-sys-color-on-primary))" }}
             >
               {displayTitle}
             </h2>
@@ -163,8 +189,12 @@ function CalendarContent() {
               style={{
                 backgroundColor:
                   currentView === "month"
-                    ? "hsl(var(--md-sys-color-primary-container))"
+                    ? "hsl(var(--md-sys-color-on-primary) / 0.2)"
                     : "transparent",
+                "--md-outlined-button-outline-color":
+                  "hsl(var(--md-sys-color-on-primary))",
+                "--md-outlined-button-label-text-color":
+                  "hsl(var(--md-sys-color-on-primary))",
               }}
             >
               Month
@@ -174,8 +204,12 @@ function CalendarContent() {
               style={{
                 backgroundColor:
                   currentView === "year"
-                    ? "hsl(var(--md-sys-color-primary-container))"
+                    ? "hsl(var(--md-sys-color-on-primary) / 0.2)"
                     : "transparent",
+                "--md-outlined-button-outline-color":
+                  "hsl(var(--md-sys-color-on-primary))",
+                "--md-outlined-button-label-text-color":
+                  "hsl(var(--md-sys-color-on-primary))",
               }}
             >
               Year
@@ -185,8 +219,12 @@ function CalendarContent() {
               style={{
                 backgroundColor:
                   currentView === "agenda"
-                    ? "hsl(var(--md-sys-color-primary-container))"
+                    ? "hsl(var(--md-sys-color-on-primary) / 0.2)"
                     : "transparent",
+                "--md-outlined-button-outline-color":
+                  "hsl(var(--md-sys-color-on-primary))",
+                "--md-outlined-button-label-text-color":
+                  "hsl(var(--md-sys-color-on-primary))",
               }}
             >
               Agenda
