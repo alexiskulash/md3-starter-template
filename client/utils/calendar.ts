@@ -176,3 +176,46 @@ export function hasEvents(
 ): boolean {
   return getEventsForDate(events, date, enabledCalendars).length > 0;
 }
+
+/**
+ * Get the start of the week (Sunday) for a given date
+ */
+export function getWeekStart(date: Date): Date {
+  const result = new Date(date);
+  const day = result.getDay();
+  result.setDate(result.getDate() - day);
+  result.setHours(0, 0, 0, 0);
+  return result;
+}
+
+/**
+ * Get array of 7 days for the week containing the given date
+ */
+export function getWeekDays(date: Date): Date[] {
+  const weekStart = getWeekStart(date);
+  const days: Date[] = [];
+
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(weekStart);
+    day.setDate(weekStart.getDate() + i);
+    days.push(day);
+  }
+
+  return days;
+}
+
+/**
+ * Get day name
+ */
+export function getDayName(dayIndex: number): string {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return days[dayIndex];
+}
+
+/**
+ * Get abbreviated day name
+ */
+export function getDayNameShort(dayIndex: number): string {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[dayIndex];
+}

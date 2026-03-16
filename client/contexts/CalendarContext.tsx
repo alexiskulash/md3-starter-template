@@ -11,6 +11,7 @@ interface CalendarContextType {
   setCurrentView: (view: ViewType) => void;
   setViewDate: (date: Date) => void;
   navigateMonth: (direction: 'prev' | 'next') => void;
+  navigateWeek: (direction: 'prev' | 'next') => void;
   navigateYear: (direction: 'prev' | 'next') => void;
   goToToday: () => void;
   getCalendarById: (calendarId: string) => Calendar | undefined;
@@ -204,6 +205,18 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const navigateWeek = useCallback((direction: 'prev' | 'next') => {
+    setState(prev => {
+      const newDate = new Date(prev.viewDate);
+      if (direction === 'prev') {
+        newDate.setDate(newDate.getDate() - 7);
+      } else {
+        newDate.setDate(newDate.getDate() + 7);
+      }
+      return { ...prev, viewDate: newDate };
+    });
+  }, []);
+
   const navigateYear = useCallback((direction: 'prev' | 'next') => {
     setState(prev => {
       const newDate = new Date(prev.viewDate);
@@ -243,6 +256,7 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     setCurrentView,
     setViewDate,
     navigateMonth,
+    navigateWeek,
     navigateYear,
     goToToday,
     getCalendarById,

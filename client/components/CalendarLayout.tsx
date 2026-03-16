@@ -3,6 +3,7 @@ import { useCalendar } from '../contexts/CalendarContext';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarSidebar } from './CalendarSidebar';
 import { MonthView } from './MonthView';
+import { WeekView } from './WeekView';
 import { YearView } from './YearView';
 
 export function CalendarLayout() {
@@ -85,6 +86,7 @@ export function CalendarLayout() {
         {/* Calendar View */}
         <div style={{ flex: 1, overflow: 'auto' }}>
           {state.currentView === 'month' && <MonthView />}
+          {state.currentView === 'week' && <WeekView />}
           {state.currentView === 'year' && <YearView />}
         </div>
       </div>

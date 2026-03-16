@@ -4,7 +4,7 @@ import { getMonthName } from '../utils/calendar';
 import { EventDialog } from './EventDialog';
 
 export function CalendarHeader() {
-  const { state, navigateMonth, navigateYear, goToToday, setCurrentView } = useCalendar();
+  const { state, navigateMonth, navigateWeek, navigateYear, goToToday, setCurrentView } = useCalendar();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const year = state.viewDate.getFullYear();
@@ -13,6 +13,8 @@ export function CalendarHeader() {
   const handlePrevious = () => {
     if (state.currentView === 'month') {
       navigateMonth('prev');
+    } else if (state.currentView === 'week') {
+      navigateWeek('prev');
     } else {
       navigateYear('prev');
     }
@@ -21,6 +23,8 @@ export function CalendarHeader() {
   const handleNext = () => {
     if (state.currentView === 'month') {
       navigateMonth('next');
+    } else if (state.currentView === 'week') {
+      navigateWeek('next');
     } else {
       navigateYear('next');
     }
@@ -33,6 +37,17 @@ export function CalendarHeader() {
   const getCurrentPeriodText = () => {
     if (state.currentView === 'month') {
       return `${getMonthName(month)} ${year}`;
+    } else if (state.currentView === 'week') {
+      const weekStart = new Date(state.viewDate);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+
+      if (weekStart.getMonth() === weekEnd.getMonth()) {
+        return `${getMonthName(weekStart.getMonth())} ${weekStart.getDate()}-${weekEnd.getDate()}, ${year}`;
+      } else {
+        return `${getMonthName(weekStart.getMonth())} ${weekStart.getDate()} - ${getMonthName(weekEnd.getMonth())} ${weekEnd.getDate()}, ${year}`;
+      }
     } else {
       return `${year}`;
     }
@@ -103,6 +118,17 @@ export function CalendarHeader() {
             }}
           >
             Month
+          </md-outlined-button>
+
+          <md-outlined-button
+            onClick={() => setCurrentView('week')}
+            style={{
+              backgroundColor: state.currentView === 'week'
+                ? 'hsl(var(--md-sys-color-secondary-container))'
+                : 'transparent',
+            }}
+          >
+            Week
           </md-outlined-button>
 
           <md-outlined-button

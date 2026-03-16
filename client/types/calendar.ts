@@ -1,4 +1,4 @@
-export type ViewType = 'month' | 'year';
+export type ViewType = 'month' | 'week' | 'year';
 
 export interface Calendar {
   id: string;
