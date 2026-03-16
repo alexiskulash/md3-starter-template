@@ -2,6 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { useCalendar } from '../contexts/CalendarContext';
 import { CalendarEvent } from '../types/calendar';
 import { formatDateISO, getCurrentTime, getDefaultEndTime } from '../utils/calendar';
+import { parseNaturalLanguage, isParsed, getParserExamples } from '../utils/naturalLanguageParser';
+
+// Import Material Web chip components
+import '@material/web/chips/chip-set.js';
+import '@material/web/chips/input-chip.js';
+import '@material/web/divider/divider.js';
 
 interface EventDialogProps {
   open: boolean;
@@ -25,6 +31,10 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
   const [endTime, setEndTime] = useState('');
   const [calendarId, setCalendarId] = useState('');
 
+  // Natural language input state
+  const [nlInput, setNlInput] = useState('');
+  const [showNlInput, setShowNlInput] = useState(true);
+
   // Initialize form with event data or defaults
   useEffect(() => {
     if (open) {
@@ -37,20 +47,24 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
         setEndDate(event.endDate);
         setEndTime(event.endTime);
         setCalendarId(event.calendarId);
+        setNlInput('');
+        setShowNlInput(false); // Hide NL input in edit mode
       } else {
         // Create mode - use defaults
         const date = defaultDate || new Date();
         const dateStr = formatDateISO(date);
         const time = getCurrentTime();
         const endTimeStr = getDefaultEndTime(time);
-        
+
         setTitle('');
         setDescription('');
         setStartDate(dateStr);
         setStartTime(time);
         setEndDate(dateStr);
         setEndTime(endTimeStr);
-        
+        setNlInput('');
+        setShowNlInput(true); // Show NL input in create mode
+
         // Select first enabled calendar
         const firstEnabled = state.calendars.find(cal => cal.enabled);
         setCalendarId(firstEnabled?.id || state.calendars[0]?.id || '');
@@ -58,17 +72,52 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
     }
   }, [open, event, defaultDate, state.calendars]);
 
-  // Auto-focus title field when dialog opens
+  // Auto-focus natural language field when dialog opens (only in create mode)
   useEffect(() => {
-    if (open) {
+    if (open && !isEditMode) {
       setTimeout(() => {
-        const titleField = document.querySelector<any>('#event-title-field');
-        if (titleField) {
-          titleField.focus();
+        const nlField = document.querySelector<any>('#nl-input-field');
+        if (nlField) {
+          nlField.focus();
         }
       }, 100);
     }
-  }, [open]);
+  }, [open, isEditMode]);
+
+  // Parse natural language input and update form fields
+  useEffect(() => {
+    if (!parsedNl) return;
+
+    // Update title if parsed
+    if (parsedNl.title && parsedNl.title !== nlInput) {
+      setTitle(parsedNl.title);
+    } else if (!isParsed(parsedNl)) {
+      // If not parsed, use the whole input as title
+      setTitle(nlInput);
+    }
+
+    // Update dates and times if parsed
+    if (parsedNl.startDate) setStartDate(parsedNl.startDate);
+    if (parsedNl.startTime) setStartTime(parsedNl.startTime);
+    if (parsedNl.endDate) setEndDate(parsedNl.endDate);
+    if (parsedNl.endTime) setEndTime(parsedNl.endTime);
+
+    // Try to match calendar by keyword
+    if (parsedNl.calendarKeyword) {
+      const matchedCalendar = state.calendars.find(cal =>
+        cal.name.toLowerCase().includes(parsedNl.calendarKeyword!)
+      );
+      if (matchedCalendar) {
+        setCalendarId(matchedCalendar.id);
+      }
+    }
+  }, [parsedNl, nlInput, state.calendars]);
+
+  // Parse natural language input (memoized)
+  const parsedNl = useMemo(() => {
+    if (!nlInput.trim() || isEditMode) return null;
+    return parseNaturalLanguage(nlInput);
+  }, [nlInput, isEditMode]);
 
   // Validate form
   const isValid = useMemo(() => {
@@ -123,6 +172,54 @@ export function EventDialog({ open, onClose, event, defaultDate, onDelete }: Eve
         </div>
         
         <form slot="content" method="dialog" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Natural Language Quick Create - Only in create mode */}
+          {showNlInput && !isEditMode && (
+            <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <md-filled-text-field
+                  id="nl-input-field"
+                  label="Quick create (e.g., 'Team meeting tomorrow at 2pm')"
+                  value={nlInput}
+                  onInput={(e: any) => setNlInput(e.target.value)}
+                  style={{ width: '100%' }}
+                  supportingText={nlInput ? '' : getParserExamples()[0]}
+                >
+                  <md-icon slot="leading-icon">auto_awesome</md-icon>
+                </md-filled-text-field>
+
+                {/* Display parsed data as chips */}
+                {parsedNl && isParsed(parsedNl) && (
+                  <md-chip-set style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {parsedNl.startDate && (
+                      <md-input-chip label={`${parsedNl.startDate} ${parsedNl.startTime}`}>
+                        <md-icon slot="icon">schedule</md-icon>
+                      </md-input-chip>
+                    )}
+                    {parsedNl.calendarKeyword && (
+                      <md-input-chip label={parsedNl.calendarKeyword}>
+                        <md-icon slot="icon">calendar_today</md-icon>
+                      </md-input-chip>
+                    )}
+                  </md-chip-set>
+                )}
+              </div>
+
+              {/* Divider */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '8px 0' }}>
+                <md-divider style={{ flex: 1 }} />
+                <span style={{
+                  fontSize: '12px',
+                  color: 'var(--md-sys-color-on-surface-variant)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  or edit details below
+                </span>
+                <md-divider style={{ flex: 1 }} />
+              </div>
+            </>
+          )}
+
           {/* Title */}
           <md-filled-text-field
             id="event-title-field"
