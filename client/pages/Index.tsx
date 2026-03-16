@@ -1,278 +1,183 @@
-import { useEffect } from "react";
-
-// Import Material Design 3 web components
+import { useState, useMemo } from "react";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
-import "@material/web/button/text-button.js";
-import "@material/web/labs/card/elevated-card.js";
 import "@material/web/icon/icon.js";
+import "@material/web/iconbutton/icon-button.js";
 
-// Declare custom elements for TypeScript
+import CalendarHeader from "../components/Calendar/CalendarHeader";
+import CalendarSidebar from "../components/Calendar/CalendarSidebar";
+import MonthView from "../components/Calendar/MonthView";
+import YearView from "../components/Calendar/YearView";
+import EventDialog from "../components/Calendar/EventDialog";
+
+import { Calendar, CalendarEvent, ViewMode } from "../types/calendar";
+import { defaultCalendars, sampleEvents } from "../data/sampleData";
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "md-filled-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-outlined-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-text-button": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-elevated-card": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "md-icon": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
+      "md-filled-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "md-outlined-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "md-icon": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "md-icon-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
     }
   }
 }
 
 export default function Index() {
-  useEffect(() => {
-    // Material Design 3 components are ready
-    console.log("Material Design 3 Starter Ready");
-  }, []);
+  const [calendars, setCalendars] = useState<Calendar[]>(defaultCalendars);
+  const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
+  const [viewMode, setViewMode] = useState<ViewMode>("month");
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  
+  // Dialog states
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+
+  // Toggle calendar visibility
+  const handleToggleCalendar = (calendarId: string) => {
+    setCalendars(prev =>
+      prev.map(cal =>
+        cal.id === calendarId ? { ...cal, enabled: !cal.enabled } : cal
+      )
+    );
+  };
+
+  // Filter events by enabled calendars
+  const visibleEvents = useMemo(() => {
+    const enabledCalendarIds = calendars.filter(c => c.enabled).map(c => c.id);
+    return events.filter(event => enabledCalendarIds.includes(event.calendarId));
+  }, [events, calendars]);
+
+  // Navigation
+  const handlePrevious = () => {
+    const newDate = new Date(currentDate);
+    if (viewMode === "month") {
+      newDate.setMonth(newDate.getMonth() - 1);
+    } else {
+      newDate.setFullYear(newDate.getFullYear() - 1);
+    }
+    setCurrentDate(newDate);
+  };
+
+  const handleNext = () => {
+    const newDate = new Date(currentDate);
+    if (viewMode === "month") {
+      newDate.setMonth(newDate.getMonth() + 1);
+    } else {
+      newDate.setFullYear(newDate.getFullYear() + 1);
+    }
+    setCurrentDate(newDate);
+  };
+
+  const handleToday = () => {
+    setCurrentDate(new Date());
+    setSelectedDate(new Date());
+  };
+
+  // Event handlers
+  const handleCreateEvent = (event: Omit<CalendarEvent, "id">) => {
+    const newEvent: CalendarEvent = {
+      ...event,
+      id: Date.now().toString(),
+    };
+    setEvents(prev => [...prev, newEvent]);
+    setIsCreateDialogOpen(false);
+  };
+
+  const handleUpdateEvent = (event: CalendarEvent) => {
+    setEvents(prev => prev.map(e => (e.id === event.id ? event : e)));
+    setEditingEvent(null);
+  };
+
+  const handleDeleteEvent = (eventId: string) => {
+    setEvents(prev => prev.filter(e => e.id !== eventId));
+    setEditingEvent(null);
+  };
+
+  const handleEventClick = (event: CalendarEvent) => {
+    setEditingEvent(event);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "hsl(var(--md-sys-color-background))",
+        background: "hsl(var(--md-sys-color-surface))",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
+        flexDirection: "column",
       }}
     >
-      <div style={{ width: "100%", maxWidth: "768px" }}>
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
-          <h1
-            style={{
-              fontSize: "48px",
-              fontWeight: "700",
-              color: "hsl(var(--md-sys-color-primary))",
-              marginBottom: "16px",
-              lineHeight: "1.2",
-            }}
-          >
-            Material Design 3
-          </h1>
-          <p
-            style={{
-              fontSize: "20px",
-              color: "hsl(var(--md-sys-color-on-surface-variant))",
-              lineHeight: "1.4",
-            }}
-          >
-            A minimal starter for rapid prototyping with Material Design 3
-          </p>
-        </div>
+      {/* Header */}
+      <CalendarHeader
+        viewMode={viewMode}
+        currentDate={currentDate}
+        onViewModeChange={setViewMode}
+        onPrevious={handlePrevious}
+        onNext={handleNext}
+        onToday={handleToday}
+        onCreate={() => setIsCreateDialogOpen(true)}
+      />
 
-        {/* Main Card */}
-        <md-elevated-card style={{ width: "100%", marginBottom: "24px" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "32px",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "24px",
-                fontWeight: "500",
-                color: "hsl(var(--md-sys-color-on-surface))",
-                marginBottom: "16px",
-                lineHeight: "1.33",
-              }}
-            >
-              Welcome to MD3 Starter
-            </h2>
-            <p
-              style={{
-                fontSize: "16px",
-                color: "hsl(var(--md-sys-color-on-surface-variant))",
-                marginBottom: "24px",
-                lineHeight: "1.5",
-                textAlign: "center",
-              }}
-            >
-              This is a bare-bones Material Design 3 application perfect for
-              prototyping. All components use the official Material Web
-              Components library.
-            </p>
+      {/* Main Content */}
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* Sidebar */}
+        <CalendarSidebar
+          calendars={calendars}
+          currentDate={currentDate}
+          selectedDate={selectedDate}
+          onToggleCalendar={handleToggleCalendar}
+          onDateSelect={handleDateSelect}
+        />
 
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "12px",
-                justifyContent: "center",
-              }}
-            >
-              <md-filled-button>Get Started</md-filled-button>
-              <md-outlined-button>Learn More</md-outlined-button>
-              <md-text-button>Documentation</md-text-button>
-            </div>
-          </div>
-        </md-elevated-card>
-
-        {/* Feature Cards Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "16px",
-          }}
-        >
-          <md-elevated-card style={{ width: "100%" }}>
-            <div style={{ padding: "24px", textAlign: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "16px",
-                }}
-              >
-                <md-icon
-                  style={{
-                    fontSize: "48px",
-                    color: "hsl(var(--md-sys-color-primary))",
-                  }}
-                >
-                  palette
-                </md-icon>
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface))",
-                  marginBottom: "8px",
-                  lineHeight: "1.33",
-                }}
-              >
-                Material Theme
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))",
-                  lineHeight: "1.43",
-                }}
-              >
-                Built with Material Design 3 color tokens and theming
-              </p>
-            </div>
-          </md-elevated-card>
-
-          <md-elevated-card style={{ width: "100%" }}>
-            <div style={{ padding: "24px", textAlign: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "16px",
-                }}
-              >
-                <md-icon
-                  style={{
-                    fontSize: "48px",
-                    color: "hsl(var(--md-sys-color-primary))",
-                  }}
-                >
-                  code
-                </md-icon>
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface))",
-                  marginBottom: "8px",
-                  lineHeight: "1.33",
-                }}
-              >
-                Web Components
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))",
-                  lineHeight: "1.43",
-                }}
-              >
-                Official Material Web Components from Google
-              </p>
-            </div>
-          </md-elevated-card>
-
-          <md-elevated-card style={{ width: "100%" }}>
-            <div style={{ padding: "24px", textAlign: "center" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "16px",
-                }}
-              >
-                <md-icon
-                  style={{
-                    fontSize: "48px",
-                    color: "hsl(var(--md-sys-color-primary))",
-                  }}
-                >
-                  speed
-                </md-icon>
-              </div>
-              <h3
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface))",
-                  marginBottom: "8px",
-                  lineHeight: "1.33",
-                }}
-              >
-                Minimal Setup
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))",
-                  lineHeight: "1.43",
-                }}
-              >
-                Bare bones starter ready for your prototypes
-              </p>
-            </div>
-          </md-elevated-card>
-        </div>
-
-        {/* Footer */}
-        <div style={{ textAlign: "center", marginTop: "48px" }}>
-          <p
-            style={{
-              fontSize: "14px",
-              color: "hsl(var(--md-sys-color-on-surface-variant))",
-              lineHeight: "1.43",
-            }}
-          >
-            Start building your next prototype with Material Design 3
-          </p>
-        </div>
+        {/* Calendar View */}
+        <main style={{ flex: 1, overflow: "auto", padding: "24px" }}>
+          {viewMode === "month" ? (
+            <MonthView
+              currentDate={currentDate}
+              selectedDate={selectedDate}
+              events={visibleEvents}
+              calendars={calendars}
+              onDateSelect={handleDateSelect}
+              onEventClick={handleEventClick}
+            />
+          ) : (
+            <YearView
+              currentDate={currentDate}
+              selectedDate={selectedDate}
+              events={visibleEvents}
+              onDateSelect={handleDateSelect}
+            />
+          )}
+        </main>
       </div>
+
+      {/* Create Event Dialog */}
+      {isCreateDialogOpen && (
+        <EventDialog
+          calendars={calendars.filter(c => c.enabled)}
+          selectedDate={selectedDate}
+          onSave={handleCreateEvent}
+          onClose={() => setIsCreateDialogOpen(false)}
+        />
+      )}
+
+      {/* Edit Event Dialog */}
+      {editingEvent && (
+        <EventDialog
+          event={editingEvent}
+          calendars={calendars}
+          selectedDate={selectedDate}
+          onSave={handleUpdateEvent}
+          onDelete={handleDeleteEvent}
+          onClose={() => setEditingEvent(null)}
+        />
+      )}
     </div>
   );
 }

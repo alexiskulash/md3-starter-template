@@ -1,0 +1,168 @@
+import { ViewMode } from "../../types/calendar";
+import "@material/web/button/filled-button.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/icon/icon.js";
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "md-filled-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "md-outlined-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "md-icon-button": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "md-icon": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+
+interface CalendarHeaderProps {
+  viewMode: ViewMode;
+  currentDate: Date;
+  onViewModeChange: (mode: ViewMode) => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onToday: () => void;
+  onCreate: () => void;
+}
+
+export default function CalendarHeader({
+  viewMode,
+  currentDate,
+  onViewModeChange,
+  onPrevious,
+  onNext,
+  onToday,
+  onCreate,
+}: CalendarHeaderProps) {
+  const formatTitle = () => {
+    if (viewMode === "month") {
+      return currentDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+    } else {
+      return currentDate.getFullYear().toString();
+    }
+  };
+
+  return (
+    <header
+      style={{
+        background: "hsl(var(--md-sys-color-surface-container))",
+        borderBottom: "1px solid hsl(var(--md-sys-color-outline-variant))",
+        padding: "16px 24px",
+      }}
+    >
+      <div
+        className="header-content"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "16px",
+        }}
+      >
+        {/* Left Section */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+          <h1
+            style={{
+              fontSize: "24px",
+              fontWeight: "500",
+              color: "hsl(var(--md-sys-color-on-surface))",
+              margin: 0,
+            }}
+          >
+            Calendar
+          </h1>
+
+          <md-filled-button onClick={onCreate}>
+            <md-icon slot="icon">add</md-icon>
+            Create
+          </md-filled-button>
+        </div>
+
+        {/* Center Section - Navigation */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <md-outlined-button onClick={onToday}>Today</md-outlined-button>
+
+          <md-icon-button onClick={onPrevious}>
+            <md-icon>chevron_left</md-icon>
+          </md-icon-button>
+
+          <md-icon-button onClick={onNext}>
+            <md-icon>chevron_right</md-icon>
+          </md-icon-button>
+
+          <h2
+            style={{
+              fontSize: "18px",
+              fontWeight: "500",
+              color: "hsl(var(--md-sys-color-on-surface))",
+              margin: 0,
+              minWidth: "200px",
+              textAlign: "center",
+            }}
+          >
+            {formatTitle()}
+          </h2>
+        </div>
+
+        {/* Right Section - View Toggle */}
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            background: "hsl(var(--md-sys-color-surface-container-highest))",
+            borderRadius: "20px",
+            padding: "4px",
+          }}
+        >
+          <md-outlined-button
+            onClick={() => onViewModeChange("month")}
+            style={{
+              background:
+                viewMode === "month"
+                  ? "hsl(var(--md-sys-color-secondary-container))"
+                  : "transparent",
+              color:
+                viewMode === "month"
+                  ? "hsl(var(--md-sys-color-on-secondary-container))"
+                  : "hsl(var(--md-sys-color-on-surface))",
+            }}
+          >
+            Month
+          </md-outlined-button>
+          <md-outlined-button
+            onClick={() => onViewModeChange("year")}
+            style={{
+              background:
+                viewMode === "year"
+                  ? "hsl(var(--md-sys-color-secondary-container))"
+                  : "transparent",
+              color:
+                viewMode === "year"
+                  ? "hsl(var(--md-sys-color-on-secondary-container))"
+                  : "hsl(var(--md-sys-color-on-surface))",
+            }}
+          >
+            Year
+          </md-outlined-button>
+        </div>
+      </div>
+
+      {/* Mobile Responsive Styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          .header-content {
+            flex-direction: column;
+            align-items: stretch !important;
+          }
+          .header-content > div {
+            justify-content: center;
+          }
+        }
+      `}</style>
+    </header>
+  );
+}

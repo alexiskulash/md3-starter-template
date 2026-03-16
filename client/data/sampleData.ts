@@ -1,0 +1,155 @@
+import { Calendar, CalendarEvent } from "../types/calendar";
+
+export const defaultCalendars: Calendar[] = [
+  {
+    id: "personal",
+    name: "Personal",
+    color: "hsl(var(--md-sys-color-primary))",
+    enabled: true,
+  },
+  {
+    id: "work",
+    name: "Work",
+    color: "hsl(var(--md-sys-color-tertiary))",
+    enabled: true,
+  },
+  {
+    id: "family",
+    name: "Family",
+    color: "hsl(var(--md-sys-color-secondary))",
+    enabled: true,
+  },
+];
+
+// Helper to get date strings
+const getDateString = (daysOffset: number): string => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysOffset);
+  return date.toISOString().split('T')[0];
+};
+
+export const sampleEvents: CalendarEvent[] = [
+  {
+    id: "1",
+    title: "Team standup",
+    startDate: getDateString(0),
+    startTime: "10:00",
+    endDate: getDateString(0),
+    endTime: "10:30",
+    description: "Daily team sync meeting",
+    calendarId: "work",
+  },
+  {
+    id: "2",
+    title: "Doctor appointment",
+    startDate: getDateString(2),
+    startTime: "14:00",
+    endDate: getDateString(2),
+    endTime: "15:00",
+    description: "Annual checkup",
+    calendarId: "personal",
+  },
+  {
+    id: "3",
+    title: "Project review",
+    startDate: getDateString(3),
+    startTime: "15:00",
+    endDate: getDateString(3),
+    endTime: "16:30",
+    description: "Q1 project review with stakeholders",
+    calendarId: "work",
+  },
+  {
+    id: "4",
+    title: "Family dinner",
+    startDate: getDateString(5),
+    startTime: "18:30",
+    endDate: getDateString(5),
+    endTime: "20:00",
+    description: "Dinner at parents' house",
+    calendarId: "family",
+  },
+  {
+    id: "5",
+    title: "Gym",
+    startDate: getDateString(1),
+    startTime: "07:00",
+    endDate: getDateString(1),
+    endTime: "08:00",
+    calendarId: "personal",
+  },
+  {
+    id: "6",
+    title: "Client presentation",
+    startDate: getDateString(4),
+    startTime: "11:00",
+    endDate: getDateString(4),
+    endTime: "12:00",
+    description: "Present new features to client",
+    calendarId: "work",
+  },
+  {
+    id: "7",
+    title: "Kids' soccer game",
+    startDate: getDateString(6),
+    startTime: "16:00",
+    endDate: getDateString(6),
+    endTime: "17:30",
+    calendarId: "family",
+  },
+  {
+    id: "8",
+    title: "Dentist",
+    startDate: getDateString(7),
+    startTime: "09:00",
+    endDate: getDateString(7),
+    endTime: "10:00",
+    calendarId: "personal",
+  },
+  {
+    id: "9",
+    title: "Sprint planning",
+    startDate: getDateString(7),
+    startTime: "13:00",
+    endDate: getDateString(7),
+    endTime: "14:30",
+    description: "Plan next sprint with the team",
+    calendarId: "work",
+  },
+  {
+    id: "10",
+    title: "Movie night",
+    startDate: getDateString(8),
+    startTime: "19:00",
+    endDate: getDateString(8),
+    endTime: "21:30",
+    calendarId: "family",
+  },
+  {
+    id: "11",
+    title: "Lunch with Sarah",
+    startDate: getDateString(0),
+    startTime: "12:30",
+    endDate: getDateString(0),
+    endTime: "13:30",
+    calendarId: "personal",
+  },
+  {
+    id: "12",
+    title: "Code review",
+    startDate: getDateString(0),
+    startTime: "14:00",
+    endDate: getDateString(0),
+    endTime: "15:00",
+    calendarId: "work",
+  },
+  {
+    id: "13",
+    title: "Yoga class",
+    startDate: getDateString(0),
+    startTime: "18:00",
+    endDate: getDateString(0),
+    endTime: "19:00",
+    calendarId: "personal",
+  },
+];
