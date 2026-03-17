@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
 import "@material/web/button/text-button.js";
@@ -45,6 +45,28 @@ export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showEventDialog, setShowEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>(undefined);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check localStorage or system preference
+    const saved = localStorage.getItem('darkMode');
+    if (saved !== null) {
+      return saved === 'true';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // Apply dark mode class to document root
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', isDarkMode.toString());
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   const viewTitle = useMemo(() => {
     if (viewMode === 'day') {
@@ -212,8 +234,8 @@ export default function Calendar() {
             alignItems: "center",
             flexWrap: "wrap"
           }}>
-            <md-filled-icon-button>
-              <md-icon>light_mode</md-icon>
+            <md-filled-icon-button onClick={toggleDarkMode}>
+              <md-icon>{isDarkMode ? 'light_mode' : 'dark_mode'}</md-icon>
             </md-filled-icon-button>
             <md-filled-button onClick={() => {
               setSelectedDate(new Date());
