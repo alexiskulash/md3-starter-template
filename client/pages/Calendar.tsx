@@ -212,24 +212,25 @@ export default function Calendar() {
         <md-elevated-card style={{ width: "100%", overflow: "hidden" }}>
           <div style={{ padding: "16px", overflow: "hidden" }}>
             {/* View Tabs */}
-            <md-tabs
-              style={{ marginBottom: "16px", width: "100%" }}
-              onchange={(e: any) => {
-                const selectedIndex = e.target.activeTabIndex;
-                if (selectedIndex === 0) setViewMode('day');
-                else if (selectedIndex === 1) setViewMode('week');
-                else if (selectedIndex === 2) setViewMode('month');
-              }}
-            >
-              <md-primary-tab active={viewMode === 'day' ? true : undefined}>
+            <md-tabs style={{ marginBottom: "16px", width: "100%" }}>
+              <md-primary-tab
+                active={viewMode === 'day' ? true : undefined}
+                onClick={() => setViewMode('day')}
+              >
                 <md-icon slot="icon">calendar_view_day</md-icon>
                 Day
               </md-primary-tab>
-              <md-primary-tab active={viewMode === 'week' ? true : undefined}>
+              <md-primary-tab
+                active={viewMode === 'week' ? true : undefined}
+                onClick={() => setViewMode('week')}
+              >
                 <md-icon slot="icon">calendar_view_week</md-icon>
                 Week
               </md-primary-tab>
-              <md-primary-tab active={viewMode === 'month' ? true : undefined}>
+              <md-primary-tab
+                active={viewMode === 'month' ? true : undefined}
+                onClick={() => setViewMode('month')}
+              >
                 <md-icon slot="icon">calendar_view_month</md-icon>
                 Month
               </md-primary-tab>
