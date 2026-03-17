@@ -5,7 +5,12 @@ import "@material/web/button/text-button.js";
 import "@material/web/iconbutton/filled-icon-button.js";
 import "@material/web/icon/icon.js";
 import "@material/web/labs/card/elevated-card.js";
+import "@material/web/tabs/tabs.js";
+import "@material/web/tabs/primary-tab.js";
 import EventDialog from "../components/EventDialog";
+import MonthView from "../components/MonthView";
+import WeekView from "../components/WeekView";
+import DayView from "../components/DayView";
 import { generateSampleEvents } from "../utils/sampleEvents";
 
 // Types
@@ -19,6 +24,8 @@ export interface CalendarEvent {
   color: string;
 }
 
+type ViewMode = 'day' | 'week' | 'month';
+
 // Declare custom elements for TypeScript
 declare global {
   namespace JSX {
@@ -29,65 +36,65 @@ declare global {
       "md-filled-icon-button": any;
       "md-icon": any;
       "md-elevated-card": any;
+      "md-tabs": any;
+      "md-primary-tab": any;
     }
   }
 }
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [events, setEvents] = useState<CalendarEvent[]>(() => generateSampleEvents());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showEventDialog, setShowEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | undefined>(undefined);
 
-  // Get calendar data for current month
-  const calendarData = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    
-    // First day of month
-    const firstDay = new Date(year, month, 1);
-    const startingDayOfWeek = firstDay.getDay(); // 0 = Sunday
-    
-    // Last day of month
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    
-    // Previous month's last day
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
-    
-    // Build calendar grid
-    const days: (Date | null)[] = [];
-    
-    // Add previous month's trailing days
-    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
-      days.push(new Date(year, month - 1, prevMonthLastDay - i));
+  const viewTitle = useMemo(() => {
+    if (viewMode === 'day') {
+      return currentDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } else if (viewMode === 'week') {
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      return `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    } else {
+      return currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
-    
-    // Add current month's days
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
-    
-    // Add next month's leading days to complete the grid (6 rows)
-    const remainingDays = 42 - days.length; // 6 rows * 7 days
-    for (let i = 1; i <= remainingDays; i++) {
-      days.push(new Date(year, month + 1, i));
-    }
-    
-    return days;
-  }, [currentDate]);
+  }, [currentDate, viewMode]);
 
-  const monthName = useMemo(() => {
-    return currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  }, [currentDate]);
-
-  const goToPreviousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  const goToPrevious = () => {
+    if (viewMode === 'day') {
+      const newDate = new Date(currentDate);
+      newDate.setDate(currentDate.getDate() - 1);
+      setCurrentDate(newDate);
+    } else if (viewMode === 'week') {
+      const newDate = new Date(currentDate);
+      newDate.setDate(currentDate.getDate() - 7);
+      setCurrentDate(newDate);
+    } else {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    }
   };
 
-  const goToNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  const goToNext = () => {
+    if (viewMode === 'day') {
+      const newDate = new Date(currentDate);
+      newDate.setDate(currentDate.getDate() + 1);
+      setCurrentDate(newDate);
+    } else if (viewMode === 'week') {
+      const newDate = new Date(currentDate);
+      newDate.setDate(currentDate.getDate() + 7);
+      setCurrentDate(newDate);
+    } else {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    }
   };
 
   const goToToday = () => {
@@ -100,8 +107,16 @@ export default function Calendar() {
     setShowEventDialog(true);
   };
 
-  const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent day click
+  const handleTimeSlotClick = (time: string) => {
+    if (!selectedDate) return;
+    setSelectedEvent(undefined);
+    setShowEventDialog(true);
+  };
+
+  const handleEventClick = (event: CalendarEvent, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation(); // Prevent day click
+    }
     setSelectedDate(event.date);
     setSelectedEvent(event);
     setShowEventDialog(true);
@@ -155,173 +170,127 @@ export default function Calendar() {
     <div style={{
       minHeight: "100vh",
       background: "hsl(var(--md-sys-color-background))",
-      padding: "24px"
+      padding: "clamp(12px, 3vw, 24px)"
     }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         {/* Header */}
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "24px",
+          marginBottom: "clamp(16px, 3vw, 24px)",
           flexWrap: "wrap",
-          gap: "16px"
+          gap: "12px"
         }}>
           <h1 style={{
-            fontSize: "32px",
+            fontSize: "clamp(24px, 5vw, 32px)",
             fontWeight: "500",
             color: "hsl(var(--md-sys-color-on-surface))",
             margin: 0
           }}>
             Calendar
           </h1>
-          
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+
+          <div style={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}>
             <md-text-button onClick={goToToday}>Today</md-text-button>
             <md-filled-button onClick={() => {
               setSelectedDate(new Date());
               setShowEventDialog(true);
             }}>
               <md-icon slot="icon">add</md-icon>
-              New Event
+              <span style={{ display: "inline" }}>New Event</span>
             </md-filled-button>
           </div>
         </div>
 
+        {/* View Tabs */}
+        <md-tabs
+          style={{ marginBottom: "16px" }}
+          onchange={(e: any) => {
+            const selectedIndex = e.target.activeTabIndex;
+            if (selectedIndex === 0) setViewMode('day');
+            else if (selectedIndex === 1) setViewMode('week');
+            else if (selectedIndex === 2) setViewMode('month');
+          }}
+        >
+          <md-primary-tab active={viewMode === 'day' ? true : undefined}>
+            <md-icon slot="icon">calendar_view_day</md-icon>
+            Day
+          </md-primary-tab>
+          <md-primary-tab active={viewMode === 'week' ? true : undefined}>
+            <md-icon slot="icon">calendar_view_week</md-icon>
+            Week
+          </md-primary-tab>
+          <md-primary-tab active={viewMode === 'month' ? true : undefined}>
+            <md-icon slot="icon">calendar_view_month</md-icon>
+            Month
+          </md-primary-tab>
+        </md-tabs>
+
         {/* Calendar Card */}
         <md-elevated-card style={{ width: "100%" }}>
-          <div style={{ padding: "24px" }}>
-            {/* Month Navigation */}
+          <div style={{ padding: "16px" }}>
+            {/* Navigation */}
             <div style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "24px"
+              marginBottom: "24px",
+              flexWrap: "wrap",
+              gap: "12px"
             }}>
-              <md-filled-icon-button onClick={goToPreviousMonth}>
+              <md-filled-icon-button onClick={goToPrevious}>
                 <md-icon>chevron_left</md-icon>
               </md-filled-icon-button>
-              
+
               <h2 style={{
-                fontSize: "24px",
+                fontSize: "clamp(16px, 4vw, 24px)",
                 fontWeight: "500",
                 color: "hsl(var(--md-sys-color-on-surface))",
-                margin: 0
+                margin: 0,
+                textAlign: "center",
+                flex: "1"
               }}>
-                {monthName}
+                {viewTitle}
               </h2>
-              
-              <md-filled-icon-button onClick={goToNextMonth}>
+
+              <md-filled-icon-button onClick={goToNext}>
                 <md-icon>chevron_right</md-icon>
               </md-filled-icon-button>
             </div>
 
-            {/* Calendar Grid */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(7, 1fr)",
-              gap: "8px"
-            }}>
-              {/* Week day headers */}
-              {weekDays.map(day => (
-                <div key={day} style={{
-                  textAlign: "center",
-                  padding: "12px 8px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  color: "hsl(var(--md-sys-color-on-surface-variant))"
-                }}>
-                  {day}
-                </div>
-              ))}
+            {/* View Content */}
+            {viewMode === 'month' && (
+              <MonthView
+                currentDate={currentDate}
+                events={events}
+                onDayClick={handleDayClick}
+                onEventClick={handleEventClick}
+              />
+            )}
 
-              {/* Calendar days */}
-              {calendarData.map((date, index) => {
-                if (!date) return null;
-                
-                const dayEvents = getEventsForDate(date);
-                const today = isToday(date);
-                const currentMonth = isCurrentMonth(date);
-                
-                return (
-                  <div
-                    key={index}
-                    onClick={() => handleDayClick(date)}
-                    style={{
-                      minHeight: "80px",
-                      padding: "8px",
-                      background: today 
-                        ? "hsl(var(--md-sys-color-primary-container))"
-                        : "hsl(var(--md-sys-color-surface-variant) / 0.3)",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      opacity: currentMonth ? 1 : 0.5,
-                      transition: "all 0.2s",
-                      border: today ? "2px solid hsl(var(--md-sys-color-primary))" : "none"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = today
-                        ? "hsl(var(--md-sys-color-primary-container))"
-                        : "hsl(var(--md-sys-color-surface-variant) / 0.5)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = today
-                        ? "hsl(var(--md-sys-color-primary-container))"
-                        : "hsl(var(--md-sys-color-surface-variant) / 0.3)";
-                    }}
-                  >
-                    <div style={{
-                      fontSize: "14px",
-                      fontWeight: today ? "600" : "400",
-                      color: today 
-                        ? "hsl(var(--md-sys-color-on-primary-container))"
-                        : "hsl(var(--md-sys-color-on-surface))",
-                      marginBottom: "4px"
-                    }}>
-                      {date.getDate()}
-                    </div>
-                    
-                    {/* Event indicators */}
-                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                      {dayEvents.slice(0, 2).map(event => (
-                        <div
-                          key={event.id}
-                          onClick={(e) => handleEventClick(event, e)}
-                          style={{
-                            fontSize: "11px",
-                            padding: "2px 4px",
-                            borderRadius: "4px",
-                            background: event.color,
-                            color: "white",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            cursor: "pointer"
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.opacity = "0.8";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.opacity = "1";
-                          }}
-                        >
-                          {event.title}
-                        </div>
-                      ))}
-                      {dayEvents.length > 2 && (
-                        <div style={{
-                          fontSize: "10px",
-                          color: "hsl(var(--md-sys-color-on-surface-variant))",
-                          padding: "2px"
-                        }}>
-                          +{dayEvents.length - 2} more
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {viewMode === 'week' && (
+              <WeekView
+                date={currentDate}
+                events={events}
+                onEventClick={(event) => handleEventClick(event)}
+                onDayClick={handleDayClick}
+              />
+            )}
+
+            {viewMode === 'day' && (
+              <DayView
+                date={currentDate}
+                events={events}
+                onEventClick={(event) => handleEventClick(event)}
+                onTimeSlotClick={handleTimeSlotClick}
+              />
+            )}
           </div>
         </md-elevated-card>
       </div>
