@@ -294,7 +294,7 @@ export default function Calendar() {
               </md-filled-button>
             </div>
 
-            {/* Today's Date Display */}
+            {/* Current Date Display */}
             <div style={{
               display: "flex",
               alignItems: "center",
@@ -316,14 +316,14 @@ export default function Calendar() {
                   fontWeight: "500",
                   marginBottom: "2px"
                 }}>
-                  Today
+                  {currentDate.toDateString() === new Date().toDateString() ? 'Today' : 'Selected Date'}
                 </div>
                 <div style={{
                   fontSize: "14px",
                   fontWeight: "600",
                   color: "hsl(var(--md-sys-color-on-surface))"
                 }}>
-                  {new Date().toLocaleDateString('en-US', {
+                  {currentDate.toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric'
