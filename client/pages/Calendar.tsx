@@ -5,8 +5,6 @@ import "@material/web/button/text-button.js";
 import "@material/web/iconbutton/filled-icon-button.js";
 import "@material/web/icon/icon.js";
 import "@material/web/labs/card/elevated-card.js";
-import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
 import EventDialog from "../components/EventDialog";
 import MonthView from "../components/MonthView";
 import WeekView from "../components/WeekView";
@@ -36,8 +34,6 @@ declare global {
       "md-filled-icon-button": any;
       "md-icon": any;
       "md-elevated-card": any;
-      "md-tabs": any;
-      "md-primary-tab": any;
     }
   }
 }
@@ -170,100 +166,209 @@ export default function Calendar() {
     <div style={{
       minHeight: "100vh",
       background: "hsl(var(--md-sys-color-background))",
-      padding: "clamp(12px, 3vw, 24px)"
+      padding: "clamp(16px, 3vw, 32px)"
     }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
         {/* Header */}
         <div style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "clamp(16px, 3vw, 24px)",
+          alignItems: "flex-start",
+          marginBottom: "clamp(24px, 4vw, 32px)",
           flexWrap: "wrap",
-          gap: "12px"
+          gap: "16px"
         }}>
-          <h1 style={{
-            fontSize: "clamp(24px, 5vw, 32px)",
-            fontWeight: "500",
-            color: "hsl(var(--md-sys-color-on-surface))",
-            margin: 0
-          }}>
-            Calendar
-          </h1>
+          {/* Title Section */}
+          <div>
+            <h1 style={{
+              fontSize: "clamp(28px, 5vw, 40px)",
+              fontWeight: "600",
+              color: "hsl(var(--md-sys-color-on-surface))",
+              margin: 0,
+              marginBottom: "4px"
+            }}>
+              Calendar
+            </h1>
+            <p style={{
+              fontSize: "clamp(13px, 2.5vw, 15px)",
+              color: "hsl(var(--md-sys-color-on-surface-variant))",
+              margin: 0,
+              fontWeight: "400"
+            }}>
+              Manage your events and schedule
+            </p>
+          </div>
 
+          {/* Actions Section */}
           <div style={{
             display: "flex",
-            gap: "8px",
+            gap: "12px",
             alignItems: "center",
             flexWrap: "wrap"
           }}>
-            <md-text-button onClick={goToToday}>Today</md-text-button>
+            <md-filled-icon-button>
+              <md-icon>light_mode</md-icon>
+            </md-filled-icon-button>
             <md-filled-button onClick={() => {
               setSelectedDate(new Date());
               setShowEventDialog(true);
             }}>
               <md-icon slot="icon">add</md-icon>
-              <span style={{ display: "inline" }}>New Event</span>
+              New Event
             </md-filled-button>
+          </div>
+        </div>
+
+        {/* Navigation Bar */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "16px",
+          padding: "16px 0"
+        }}>
+          {/* Left: View Tabs and Today's Date */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            flexWrap: "wrap"
+          }}>
+            {/* View Tabs */}
+            <div style={{
+              display: "flex",
+              gap: "8px",
+              background: "hsl(var(--md-sys-color-surface-variant) / 0.4)",
+              padding: "4px",
+              borderRadius: "8px"
+            }}>
+              <md-filled-button
+                onClick={() => setViewMode('month')}
+                style={{
+                  background: viewMode === 'month'
+                    ? "hsl(var(--md-sys-color-primary))"
+                    : "transparent",
+                  color: viewMode === 'month'
+                    ? "hsl(var(--md-sys-color-on-primary))"
+                    : "hsl(var(--md-sys-color-on-surface))",
+                  minWidth: "80px"
+                }}
+              >
+                Month
+              </md-filled-button>
+              <md-filled-button
+                onClick={() => setViewMode('week')}
+                style={{
+                  background: viewMode === 'week'
+                    ? "hsl(var(--md-sys-color-primary))"
+                    : "transparent",
+                  color: viewMode === 'week'
+                    ? "hsl(var(--md-sys-color-on-primary))"
+                    : "hsl(var(--md-sys-color-on-surface))",
+                  minWidth: "80px"
+                }}
+              >
+                Week
+              </md-filled-button>
+              <md-filled-button
+                onClick={() => setViewMode('day')}
+                style={{
+                  background: viewMode === 'day'
+                    ? "hsl(var(--md-sys-color-primary))"
+                    : "transparent",
+                  color: viewMode === 'day'
+                    ? "hsl(var(--md-sys-color-on-primary))"
+                    : "hsl(var(--md-sys-color-on-surface))",
+                  minWidth: "80px"
+                }}
+              >
+                Day
+              </md-filled-button>
+            </div>
+
+            {/* Today's Date Display */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "8px 16px",
+              background: "hsl(var(--md-sys-color-surface-variant) / 0.4)",
+              borderRadius: "8px"
+            }}>
+              <md-icon style={{
+                fontSize: "24px",
+                color: "hsl(var(--md-sys-color-primary))"
+              }}>
+                calendar_today
+              </md-icon>
+              <div>
+                <div style={{
+                  fontSize: "12px",
+                  color: "hsl(var(--md-sys-color-on-surface-variant))",
+                  fontWeight: "500",
+                  marginBottom: "2px"
+                }}>
+                  Today
+                </div>
+                <div style={{
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  color: "hsl(var(--md-sys-color-on-surface))"
+                }}>
+                  {new Date().toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Month Navigation */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "16px"
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px"
+            }}>
+              <md-icon style={{
+                fontSize: "28px",
+                color: "hsl(var(--md-sys-color-primary))"
+              }}>
+                calendar_month
+              </md-icon>
+              <h2 style={{
+                fontSize: "clamp(18px, 4vw, 24px)",
+                fontWeight: "600",
+                color: "hsl(var(--md-sys-color-on-surface))",
+                margin: 0
+              }}>
+                {viewTitle}
+              </h2>
+            </div>
+
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <md-filled-icon-button onClick={goToPrevious}>
+                <md-icon>chevron_left</md-icon>
+              </md-filled-icon-button>
+              <md-text-button onClick={goToToday}>Today</md-text-button>
+              <md-filled-icon-button onClick={goToNext}>
+                <md-icon>chevron_right</md-icon>
+              </md-filled-icon-button>
+            </div>
           </div>
         </div>
 
         {/* Calendar Card */}
         <md-elevated-card style={{ width: "100%", overflow: "hidden" }}>
-          <div style={{ padding: "16px", overflow: "hidden" }}>
-            {/* View Tabs */}
-            <md-tabs style={{ marginBottom: "16px", width: "100%" }}>
-              <md-primary-tab
-                active={viewMode === 'day' ? true : undefined}
-                onClick={() => setViewMode('day')}
-              >
-                <md-icon slot="icon">calendar_view_day</md-icon>
-                Day
-              </md-primary-tab>
-              <md-primary-tab
-                active={viewMode === 'week' ? true : undefined}
-                onClick={() => setViewMode('week')}
-              >
-                <md-icon slot="icon">calendar_view_week</md-icon>
-                Week
-              </md-primary-tab>
-              <md-primary-tab
-                active={viewMode === 'month' ? true : undefined}
-                onClick={() => setViewMode('month')}
-              >
-                <md-icon slot="icon">calendar_view_month</md-icon>
-                Month
-              </md-primary-tab>
-            </md-tabs>
-            {/* Navigation */}
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "24px",
-              flexWrap: "wrap",
-              gap: "12px"
-            }}>
-              <md-filled-icon-button onClick={goToPrevious}>
-                <md-icon>chevron_left</md-icon>
-              </md-filled-icon-button>
-
-              <h2 style={{
-                fontSize: "clamp(16px, 4vw, 24px)",
-                fontWeight: "500",
-                color: "hsl(var(--md-sys-color-on-surface))",
-                margin: 0,
-                textAlign: "center",
-                flex: "1"
-              }}>
-                {viewTitle}
-              </h2>
-
-              <md-filled-icon-button onClick={goToNext}>
-                <md-icon>chevron_right</md-icon>
-              </md-filled-icon-button>
-            </div>
-
+          <div style={{ padding: "clamp(16px, 3vw, 24px)", overflow: "hidden" }}>
             {/* View Content */}
             <div style={{ width: "100%", overflow: "hidden" }}>
               {viewMode === 'month' && (
