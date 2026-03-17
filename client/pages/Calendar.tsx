@@ -75,7 +75,10 @@ export default function Calendar() {
       newDate.setDate(currentDate.getDate() - 7);
       setCurrentDate(newDate);
     } else {
-      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+      // Month view: go to previous month, preserving the day of month when possible
+      const newDate = new Date(currentDate);
+      newDate.setMonth(currentDate.getMonth() - 1);
+      setCurrentDate(newDate);
     }
   };
 
@@ -89,7 +92,10 @@ export default function Calendar() {
       newDate.setDate(currentDate.getDate() + 7);
       setCurrentDate(newDate);
     } else {
-      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+      // Month view: go to next month, preserving the day of month when possible
+      const newDate = new Date(currentDate);
+      newDate.setMonth(currentDate.getMonth() + 1);
+      setCurrentDate(newDate);
     }
   };
 
