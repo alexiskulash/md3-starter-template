@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Import Material Design 3 web components
 import "@material/web/button/filled-button.js";
@@ -36,6 +37,8 @@ declare global {
 }
 
 export default function Index() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Material Design 3 components are ready
     console.log("Material Design 3 Starter Ready");
@@ -121,7 +124,9 @@ export default function Index() {
                 justifyContent: "center",
               }}
             >
-              <md-filled-button>Get Started</md-filled-button>
+              <md-filled-button onClick={() => navigate('/calendar')}>
+                Open Calendar
+              </md-filled-button>
               <md-outlined-button>Learn More</md-outlined-button>
               <md-text-button>Documentation</md-text-button>
             </div>
