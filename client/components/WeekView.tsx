@@ -33,7 +33,7 @@ export default function WeekView({ date, events, onEventClick, onDayClick }: Wee
   const weekRange = `${weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
   return (
-    <div>
+    <div style={{ width: "100%", overflow: "hidden" }}>
       {/* Week Header */}
       <div style={{
         padding: "16px",
@@ -54,7 +54,9 @@ export default function WeekView({ date, events, onEventClick, onDayClick }: Wee
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-        gap: "clamp(8px, 2vw, 12px)"
+        gap: "clamp(8px, 2vw, 12px)",
+        width: "100%",
+        overflow: "hidden"
       }}>
         {weekDays.map((day, index) => {
           const dayEvents = getEventsForDate(day);

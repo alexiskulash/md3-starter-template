@@ -35,7 +35,7 @@ export default function DayView({ date, events, onEventClick, onTimeSlotClick }:
   };
 
   return (
-    <div>
+    <div style={{ width: "100%", overflow: "hidden" }}>
       {/* Date Header */}
       <div style={{
         padding: "clamp(12px, 3vw, 16px)",
@@ -61,12 +61,13 @@ export default function DayView({ date, events, onEventClick, onTimeSlotClick }:
       </div>
 
       {/* Time Slots */}
-      <div style={{ 
-        display: "flex", 
-        flexDirection: "column", 
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
         gap: "4px",
         maxHeight: "600px",
-        overflowY: "auto"
+        overflowY: "auto",
+        width: "100%"
       }}>
         {timeSlots.map(time => {
           const slotEvents = getEventsForTimeSlot(time);

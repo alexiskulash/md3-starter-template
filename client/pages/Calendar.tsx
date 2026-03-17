@@ -208,33 +208,32 @@ export default function Calendar() {
           </div>
         </div>
 
-        {/* View Tabs */}
-        <md-tabs
-          style={{ marginBottom: "16px" }}
-          onchange={(e: any) => {
-            const selectedIndex = e.target.activeTabIndex;
-            if (selectedIndex === 0) setViewMode('day');
-            else if (selectedIndex === 1) setViewMode('week');
-            else if (selectedIndex === 2) setViewMode('month');
-          }}
-        >
-          <md-primary-tab active={viewMode === 'day' ? true : undefined}>
-            <md-icon slot="icon">calendar_view_day</md-icon>
-            Day
-          </md-primary-tab>
-          <md-primary-tab active={viewMode === 'week' ? true : undefined}>
-            <md-icon slot="icon">calendar_view_week</md-icon>
-            Week
-          </md-primary-tab>
-          <md-primary-tab active={viewMode === 'month' ? true : undefined}>
-            <md-icon slot="icon">calendar_view_month</md-icon>
-            Month
-          </md-primary-tab>
-        </md-tabs>
-
         {/* Calendar Card */}
-        <md-elevated-card style={{ width: "100%" }}>
-          <div style={{ padding: "16px" }}>
+        <md-elevated-card style={{ width: "100%", overflow: "hidden" }}>
+          <div style={{ padding: "16px", overflow: "hidden" }}>
+            {/* View Tabs */}
+            <md-tabs
+              style={{ marginBottom: "16px", width: "100%" }}
+              onchange={(e: any) => {
+                const selectedIndex = e.target.activeTabIndex;
+                if (selectedIndex === 0) setViewMode('day');
+                else if (selectedIndex === 1) setViewMode('week');
+                else if (selectedIndex === 2) setViewMode('month');
+              }}
+            >
+              <md-primary-tab active={viewMode === 'day' ? true : undefined}>
+                <md-icon slot="icon">calendar_view_day</md-icon>
+                Day
+              </md-primary-tab>
+              <md-primary-tab active={viewMode === 'week' ? true : undefined}>
+                <md-icon slot="icon">calendar_view_week</md-icon>
+                Week
+              </md-primary-tab>
+              <md-primary-tab active={viewMode === 'month' ? true : undefined}>
+                <md-icon slot="icon">calendar_view_month</md-icon>
+                Month
+              </md-primary-tab>
+            </md-tabs>
             {/* Navigation */}
             <div style={{
               display: "flex",
@@ -265,32 +264,34 @@ export default function Calendar() {
             </div>
 
             {/* View Content */}
-            {viewMode === 'month' && (
-              <MonthView
-                currentDate={currentDate}
-                events={events}
-                onDayClick={handleDayClick}
-                onEventClick={handleEventClick}
-              />
-            )}
+            <div style={{ width: "100%", overflow: "hidden" }}>
+              {viewMode === 'month' && (
+                <MonthView
+                  currentDate={currentDate}
+                  events={events}
+                  onDayClick={handleDayClick}
+                  onEventClick={handleEventClick}
+                />
+              )}
 
-            {viewMode === 'week' && (
-              <WeekView
-                date={currentDate}
-                events={events}
-                onEventClick={(event) => handleEventClick(event)}
-                onDayClick={handleDayClick}
-              />
-            )}
+              {viewMode === 'week' && (
+                <WeekView
+                  date={currentDate}
+                  events={events}
+                  onEventClick={(event) => handleEventClick(event)}
+                  onDayClick={handleDayClick}
+                />
+              )}
 
-            {viewMode === 'day' && (
-              <DayView
-                date={currentDate}
-                events={events}
-                onEventClick={(event) => handleEventClick(event)}
-                onTimeSlotClick={handleTimeSlotClick}
-              />
-            )}
+              {viewMode === 'day' && (
+                <DayView
+                  date={currentDate}
+                  events={events}
+                  onEventClick={(event) => handleEventClick(event)}
+                  onTimeSlotClick={handleTimeSlotClick}
+                />
+              )}
+            </div>
           </div>
         </md-elevated-card>
       </div>

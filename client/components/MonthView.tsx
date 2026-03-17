@@ -68,7 +68,9 @@ export default function MonthView({ currentDate, events, onDayClick, onEventClic
     <div style={{
       display: "grid",
       gridTemplateColumns: "repeat(7, 1fr)",
-      gap: "clamp(4px, 1vw, 8px)"
+      gap: "clamp(4px, 1vw, 8px)",
+      width: "100%",
+      overflow: "hidden"
     }}>
       {/* Week day headers */}
       {weekDays.map(day => (
